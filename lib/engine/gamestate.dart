@@ -3,7 +3,7 @@ import 'pieces.dart';
 import 'board.dart';
 
 class GameState {
-  static const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+  final _files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 
   var board = Board();
   var turnPlayer = Player.white;
@@ -15,7 +15,7 @@ class GameState {
   }
 
   void calculateLegalMoves() {
-    for (String file in files) {
+    for (String file in _files) {
       for (int rank = 1; rank <= 8; rank++) {
         pieceLegalMoves(file, rank);
       }
@@ -57,40 +57,24 @@ class GameState {
       }
     } else if (piece.type == PieceType.knight) {
       // Knight
-      bool hasFriendlyPiece(sqr) =>
-          board[sqr]?.player == turnPlayer;
+      bool hasFriendlyPiece(sqr) => board[sqr]?.player == turnPlayer;
+      var shifts = [
+        (-1, -2),
+        (1, -2),
+        (-1, 2),
+        (1, 2),
+        (-2, -1),
+        (2, -1),
+        (-2, 1),
+        (2, 1),
+      ];
 
-      targetSquare = '${file.shiftFile(-1)}${rank - 2}';
-      if (Board.isValidSquare(targetSquare) && !hasFriendlyPiece(targetSquare)) {
-        legalMoves.add('N_${square}_$targetSquare');
-      }
-      targetSquare = '${file.shiftFile(1)}${rank - 2}';
-      if (Board.isValidSquare(targetSquare) && !hasFriendlyPiece(targetSquare)) {
-        legalMoves.add('N_${square}_$targetSquare');
-      }
-      targetSquare = '${file.shiftFile(-1)}${rank + 2}';
-      if (Board.isValidSquare(targetSquare) && !hasFriendlyPiece(targetSquare)) {
-        legalMoves.add('N_${square}_$targetSquare');
-      }
-      targetSquare = '${file.shiftFile(1)}${rank + 2}';
-      if (Board.isValidSquare(targetSquare) && !hasFriendlyPiece(targetSquare)) {
-        legalMoves.add('N_${square}_$targetSquare');
-      }
-      targetSquare = '${file.shiftFile(-2)}${rank - 1}';
-      if (Board.isValidSquare(targetSquare) && !hasFriendlyPiece(targetSquare)) {
-        legalMoves.add('N_${square}_$targetSquare');
-      }
-      targetSquare = '${file.shiftFile(2)}${rank - 1}';
-      if (Board.isValidSquare(targetSquare) && !hasFriendlyPiece(targetSquare)) {
-        legalMoves.add('N_${square}_$targetSquare');
-      }
-      targetSquare = '${file.shiftFile(-2)}${rank + 1}';
-      if (Board.isValidSquare(targetSquare) && !hasFriendlyPiece(targetSquare)) {
-        legalMoves.add('N_${square}_$targetSquare');
-      }
-      targetSquare = '${file.shiftFile(2)}${rank + 1}';
-      if (Board.isValidSquare(targetSquare) && !hasFriendlyPiece(targetSquare)) {
-        legalMoves.add('N_${square}_$targetSquare');
+      for (var (a, b) in shifts) {
+        targetSquare = '${file.shiftFile(a)}${rank + b}';
+        if (Board.isValidSquare(targetSquare) &&
+            !hasFriendlyPiece(targetSquare)) {
+          legalMoves.add('N_${square}_$targetSquare');
+        }
       }
     }
   }
