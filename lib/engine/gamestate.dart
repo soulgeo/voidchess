@@ -31,7 +31,7 @@ class GameState {
       return;
     }
 
-    if (piece == wp) {
+    if (piece == wp && turnPlayer == Player.white) {
       // White pawn
       targetSquare = '$file${rank + 1}';
       if (board[targetSquare] == null) {
@@ -43,7 +43,7 @@ class GameState {
           }
         }
       }
-    } else if (piece == bp) {
+    } else if (piece == bp && turnPlayer == Player.black) {
       // Black pawn
       targetSquare = '$file${rank - 1}';
       if (board[targetSquare] == null) {
@@ -55,7 +55,7 @@ class GameState {
           }
         }
       }
-    } else if (piece.type == PieceType.knight) {
+    } else if (piece.type == PieceType.knight && piece.player == turnPlayer) {
       // Knight
       bool hasFriendlyPiece(sqr) => board[sqr]?.player == turnPlayer;
       var shifts = [

@@ -9,7 +9,7 @@ void main() {
     var gamestate = GameState.atPosition(Player.white, [
       [__, __, __, __, bK, __, __, __],
       [__, __, __, __, __, __, __, __],
-      [__, __, __, __, __, __, __, __],
+      [__, __, __, __, __, __, bN, __],
       [__, __, __, __, __, __, __, __],
       [__, __, __, __, __, __, __, __],
       [__, __, bB, __, __, __, __, __],
@@ -20,7 +20,8 @@ void main() {
     expect(gamestate.legalMoves, allOf([
       contains('N_b1_a3'),
       contains('N_b1_c3'),
-      isNot(contains('N_b1_d2'))
+      isNot(contains('N_b1_d2')),
+      isNot(contains('N_g6_h8')),
     ]));
   });
 }
