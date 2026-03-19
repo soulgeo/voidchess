@@ -1,4 +1,5 @@
 enum Player { white, black }
+
 enum PieceType { pawn, knight, bishop, rook, queen, king }
 
 class Piece {

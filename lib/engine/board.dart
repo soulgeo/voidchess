@@ -35,7 +35,6 @@ class Board {
     return (x, y);
   }
 
-
   // OVERRIDE THE READ OPERATOR
   // This lets us do: Piece? p = board['e4'];
   Piece? operator [](String square) {
@@ -53,4 +52,3 @@ class Board {
     }
   }
 }
-

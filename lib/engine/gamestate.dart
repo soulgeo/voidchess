@@ -24,72 +24,73 @@ class GameState {
 
   void pieceLegalMoves(String file, int rank) {
     final square = '$file$rank';
-    var newSquare = '';
+    final piece = board[square];
+    var targetSquare = '';
 
-    if (board[square] == null) {
+    if (piece == null) {
       return;
     }
 
-    if (board[square] == wp) {
+    if (piece == wp) {
       // White pawn
-      newSquare = '$file${rank + 1}';
-      if (board[newSquare] == null) {
-        legalMoves.add('p_${square}_$newSquare');
+      targetSquare = '$file${rank + 1}';
+      if (board[targetSquare] == null) {
+        legalMoves.add('p_${square}_$targetSquare');
         if (rank == 2) {
-          newSquare = '$file${rank + 2}';
-          if (board[newSquare] == null) {
-            legalMoves.add('p_${square}_$newSquare');
+          targetSquare = '$file${rank + 2}';
+          if (board[targetSquare] == null) {
+            legalMoves.add('p_${square}_$targetSquare');
           }
         }
       }
-    } else if (board[square] == bp) {
+    } else if (piece == bp) {
       // Black pawn
-      newSquare = '$file${rank - 1}';
-      if (board[newSquare] == null) {
-        legalMoves.add('p_${square}_$newSquare');
+      targetSquare = '$file${rank - 1}';
+      if (board[targetSquare] == null) {
+        legalMoves.add('p_${square}_$targetSquare');
         if (rank == 7) {
-          newSquare = '$file${rank - 2}';
-          if (board[newSquare] == null) {
-            legalMoves.add('p_${square}_$newSquare');
+          targetSquare = '$file${rank - 2}';
+          if (board[targetSquare] == null) {
+            legalMoves.add('p_${square}_$targetSquare');
           }
         }
       }
-    } else if (board[square]?.type == PieceType.knight) {
+    } else if (piece.type == PieceType.knight) {
       // Knight
-      bool hasFriendlyPiece(targetSquare) =>
-          board[targetSquare]?.player == turnPlayer;
+      bool hasFriendlyPiece(sqr) =>
+          board[sqr]?.player == turnPlayer;
 
-      newSquare = '${file.shiftFile(-1)}${rank - 2}';
-      if (Board.isValidSquare(newSquare) && !hasFriendlyPiece(newSquare)) {
-        legalMoves.add('N_${square}_$newSquare');
+      targetSquare = '${file.shiftFile(-1)}${rank - 2}';
+      if (Board.isValidSquare(targetSquare) && !hasFriendlyPiece(targetSquare)) {
+        legalMoves.add('N_${square}_$targetSquare');
       }
-      newSquare = '${file.shiftFile(1)}${rank - 2}';
-      if (Board.isValidSquare(newSquare) && !hasFriendlyPiece(newSquare)) {
-        legalMoves.add('N_${square}_$newSquare');
+      targetSquare = '${file.shiftFile(1)}${rank - 2}';
+      if (Board.isValidSquare(targetSquare) && !hasFriendlyPiece(targetSquare)) {
+        legalMoves.add('N_${square}_$targetSquare');
       }
-      newSquare = '${file.shiftFile(-1)}${rank + 2}';
-      if (Board.isValidSquare(newSquare) && !hasFriendlyPiece(newSquare)) {
-        legalMoves.add('N_${square}_$newSquare');
+      targetSquare = '${file.shiftFile(-1)}${rank + 2}';
+      if (Board.isValidSquare(targetSquare) && !hasFriendlyPiece(targetSquare)) {
+        legalMoves.add('N_${square}_$targetSquare');
       }
-      newSquare = '${file.shiftFile(1)}${rank + 2}';
-      if (Board.isValidSquare(newSquare) && !hasFriendlyPiece(newSquare)) {
-        legalMoves.add('N_${square}_$newSquare');
+      targetSquare = '${file.shiftFile(1)}${rank + 2}';
+      if (Board.isValidSquare(targetSquare) && !hasFriendlyPiece(targetSquare)) {
+        legalMoves.add('N_${square}_$targetSquare');
       }
-      newSquare = '${file.shiftFile(-2)}${rank - 1}';
-      if (Board.isValidSquare(newSquare) && !hasFriendlyPiece(newSquare)) {
-        legalMoves.add('N_${square}_$newSquare');
+      targetSquare = '${file.shiftFile(-2)}${rank - 1}';
+      if (Board.isValidSquare(targetSquare) && !hasFriendlyPiece(targetSquare)) {
+        legalMoves.add('N_${square}_$targetSquare');
       }
-      newSquare = '${file.shiftFile(2)}${rank - 1}';
-      if (Board.isValidSquare(newSquare) && !hasFriendlyPiece(newSquare)) {
-        legalMoves.add('N_${square}_$newSquare');
+      targetSquare = '${file.shiftFile(2)}${rank - 1}';
+      if (Board.isValidSquare(targetSquare) && !hasFriendlyPiece(targetSquare)) {
+        legalMoves.add('N_${square}_$targetSquare');
       }
-      newSquare = '${file.shiftFile(-2)}${rank + 1}';
-      if (Board.isValidSquare(newSquare) && !hasFriendlyPiece(newSquare)) {
-        legalMoves.add('N_${square}_$newSquare');
+      targetSquare = '${file.shiftFile(-2)}${rank + 1}';
+      if (Board.isValidSquare(targetSquare) && !hasFriendlyPiece(targetSquare)) {
+        legalMoves.add('N_${square}_$targetSquare');
       }
-      newSquare = '${file.shiftFile(2)}${rank + 1}';
-      if (Board.isValidSquare(newSquare) && !hasFriendlyPiece(newSquare)) {
-        legalMoves.add('N_${square}_$newSquare');
+      targetSquare = '${file.shiftFile(2)}${rank + 1}';
+      if (Board.isValidSquare(targetSquare) && !hasFriendlyPiece(targetSquare)) {
+        legalMoves.add('N_${square}_$targetSquare');
       }
     }
   }
