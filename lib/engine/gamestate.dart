@@ -25,6 +25,19 @@ class GameState {
     }
   }
 
+  bool isLegalMove(String targetSquare, String square) {
+    if (board[targetSquare] == null ) {
+      legalMoves.add('R_${square}_$targetSquare');
+      return true;
+    }
+    if(hasFriendlyPiece(targetSquare)) {
+      return false;
+    } else {
+      legalMoves.add('R_${square}_$targetSquare');
+      return false;
+    }
+  }
+
   void pieceLegalMoves(String file, int rank) {
     final square = '$file$rank';
     final piece = board[square];
@@ -79,33 +92,45 @@ class GameState {
         }
       }
     } else if (piece.type == PieceType.rook && piece.player == turnPlayer) {
-      //Rook
-      //Moving Up
+      //Rook    
+      //Moving Up   
       for (int checkRank = rank + 1; checkRank <= 8; checkRank++) {
         targetSquare = '$file$checkRank';
-        if (board[targetSquare] == null) {
-          legalMoves.add('R_${square}_$targetSquare');
-          continue;
-        }
-        if(!hasFriendlyPiece(targetSquare)) {
-            legalMoves.add('R_${square}_$targetSquare');
-            break;
-        } else {
+        if(!isLegalMove(targetSquare, square)) {
           break;
         }
       }
       //Moving Down
       for (int checkRank = rank - 1; checkRank >= 1; checkRank--) {
         targetSquare = '$file$checkRank';
-        if (board[targetSquare] == null) {
-          legalMoves.add('R_${square}_$targetSquare');
-          continue;
-        }
-        if(!hasFriendlyPiece(targetSquare)) {
-            legalMoves.add('R_${square}_$targetSquare');
-            break;
-        } else {
+        if(!isLegalMove(targetSquare, square)) {
           break;
+        }
+      }
+      //Moving Right
+      for (int filePos = _files.indexOf(file) + 1; filePos < _files.length; filePos++) {
+        targetSquare = '${_files[filePos]}$rank';
+        if(!isLegalMove(targetSquare, square)) {
+          break;
+        }
+      } 
+      //Moving Left
+      for (int filePos = _files.indexOf(file) - 1; filePos >= 0; filePos--) {
+        targetSquare = '${_files[filePos]}$rank';
+        if(!isLegalMove(targetSquare, square)) {
+          break;
+        }
+      } 
+    } else if (piece.type == PieceType.bishop && piece.player == turnPlayer) {
+      //Bishop
+      for (int filePos = _files.indexOf(file) + 1; filePos < _files.length; filePos++) {
+        for (int checkRank = rank + 1; checkRank <= 8; checkRank++) {
+          if (filePos == checkRank) {
+            targetSquare = '${_files[filePos]}$checkRank';
+            if(!isLegalMove(targetSquare, square)) {
+              break;
+            }
+          }
         }
       }
     }
