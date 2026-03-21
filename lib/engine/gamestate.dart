@@ -93,28 +93,28 @@ class GameState {
       }
     } else if (piece.type == PieceType.rook && piece.player == turnPlayer) {
       //Rook    
-      //Moving Up   
+      //Up   
       for (int checkRank = rank + 1; checkRank <= 8; checkRank++) {
         targetSquare = '$file$checkRank';
         if(!isLegalMove(targetSquare, square)) {
           break;
         }
       }
-      //Moving Down
+      //Down
       for (int checkRank = rank - 1; checkRank >= 1; checkRank--) {
         targetSquare = '$file$checkRank';
         if(!isLegalMove(targetSquare, square)) {
           break;
         }
       }
-      //Moving Right
+      //Right
       for (int filePos = _files.indexOf(file) + 1; filePos < _files.length; filePos++) {
         targetSquare = '${_files[filePos]}$rank';
         if(!isLegalMove(targetSquare, square)) {
           break;
         }
       } 
-      //Moving Left
+      //Left
       for (int filePos = _files.indexOf(file) - 1; filePos >= 0; filePos--) {
         targetSquare = '${_files[filePos]}$rank';
         if(!isLegalMove(targetSquare, square)) {
@@ -123,14 +123,52 @@ class GameState {
       } 
     } else if (piece.type == PieceType.bishop && piece.player == turnPlayer) {
       //Bishop
+      //Top-Right
+      int checkRank = rank;
       for (int filePos = _files.indexOf(file) + 1; filePos < _files.length; filePos++) {
-        for (int checkRank = rank + 1; checkRank <= 8; checkRank++) {
-          if (filePos == checkRank) {
-            targetSquare = '${_files[filePos]}$checkRank';
-            if(!isLegalMove(targetSquare, square)) {
-              break;
-            }
-          }
+        checkRank++;
+        if (checkRank > 8) {
+          break;
+        }
+        targetSquare = '${_files[filePos]}$checkRank';
+        if(!isLegalMove(targetSquare, square)) {
+          break;
+        }
+      }
+      //Bottom-Right
+      checkRank = rank;
+      for (int filePos = _files.indexOf(file) + 1; filePos < _files.length; filePos++) {
+        checkRank--;
+        if (checkRank <= 0) {
+          break;
+        }
+        targetSquare = '${_files[filePos]}$checkRank';
+        if(!isLegalMove(targetSquare, square)) {
+          break;
+        }
+      }
+      //Top-Left
+      checkRank = rank;
+      for (int filePos = _files.indexOf(file) - 1; filePos >= 0; filePos--) {
+        checkRank++;
+        if (checkRank > 8) {
+          break;
+        }
+        targetSquare = '${_files[filePos]}$checkRank';
+        if(!isLegalMove(targetSquare, square)) {
+          break;
+        }
+      }
+      //Bottom-Left
+      checkRank = rank;
+      for (int filePos = _files.indexOf(file) - 1; filePos >= 0; filePos--) {
+        checkRank--;
+        if (checkRank <= 0) {
+          break;
+        }
+        targetSquare = '${_files[filePos]}$checkRank';
+        if(!isLegalMove(targetSquare, square)) {
+          break;
         }
       }
     }
