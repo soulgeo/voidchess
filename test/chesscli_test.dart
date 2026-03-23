@@ -19,8 +19,27 @@ void main() {
     gamestate.calculateLegalMoves();
     print(gamestate.legalMoves);
     expect(gamestate.legalMoves, allOf([
-      //contains('R_g4_g5'),
-      //isNot(contains('R_g4_g6'))
+      //contains(''),
+      //isNot(contains(''))
     ]));
   });
+test('Print All Added Legal Moves', () {
+    // ignore: constant_identifier_names
+    const __ = null;
+    var gamestate = GameState.atPosition(Player.white, [
+      [__, __, __, __, __, __, __, __],
+      [__, __, __, __, __, __, __, __],
+      [__, wQ, __, __, __, __, __, __],
+      [__, __, __, __, __, __, __, __],
+      [__, __, __, __, __, __, __, __],
+      [__, __, __, __, __, __, __, __],
+      [__, __, __, __, __, __, __, __],
+      [__, __, __, __, __, __, __, __],
+    ]);
+    gamestate.calculateLegalMoves();
+    print(gamestate.legalMoves);
+    expect(gamestate.legalMoves, allOf([
+    ]));
+  });
+
 }

@@ -25,15 +25,15 @@ class GameState {
     }
   }
 
-  bool isLegalMove(String targetSquare, String square) {
+  bool isLegalMove(String piece, String targetSquare, String square) {
     if (board[targetSquare] == null ) {
-      legalMoves.add('R_${square}_$targetSquare');
+      legalMoves.add('${piece}_${square}_$targetSquare');
       return true;
     }
     if(hasFriendlyPiece(targetSquare)) {
       return false;
     } else {
-      legalMoves.add('R_${square}_$targetSquare');
+      legalMoves.add('${piece}_${square}_$targetSquare');
       return false;
     }
   }
@@ -96,28 +96,28 @@ class GameState {
       //Up   
       for (int checkRank = rank + 1; checkRank <= 8; checkRank++) {
         targetSquare = '$file$checkRank';
-        if(!isLegalMove(targetSquare, square)) {
+        if(!isLegalMove('R', targetSquare, square)) {
           break;
         }
       }
       //Down
       for (int checkRank = rank - 1; checkRank >= 1; checkRank--) {
         targetSquare = '$file$checkRank';
-        if(!isLegalMove(targetSquare, square)) {
+        if(!isLegalMove('R', targetSquare, square)) {
           break;
         }
       }
       //Right
       for (int filePos = _files.indexOf(file) + 1; filePos < _files.length; filePos++) {
         targetSquare = '${_files[filePos]}$rank';
-        if(!isLegalMove(targetSquare, square)) {
+        if(!isLegalMove('R', targetSquare, square)) {
           break;
         }
       } 
       //Left
       for (int filePos = _files.indexOf(file) - 1; filePos >= 0; filePos--) {
         targetSquare = '${_files[filePos]}$rank';
-        if(!isLegalMove(targetSquare, square)) {
+        if(!isLegalMove('R', targetSquare, square)) {
           break;
         }
       } 
@@ -131,7 +131,7 @@ class GameState {
           break;
         }
         targetSquare = '${_files[filePos]}$checkRank';
-        if(!isLegalMove(targetSquare, square)) {
+        if(!isLegalMove('B', targetSquare, square)) {
           break;
         }
       }
@@ -143,7 +143,7 @@ class GameState {
           break;
         }
         targetSquare = '${_files[filePos]}$checkRank';
-        if(!isLegalMove(targetSquare, square)) {
+        if(!isLegalMove('B', targetSquare, square)) {
           break;
         }
       }
@@ -155,7 +155,7 @@ class GameState {
           break;
         }
         targetSquare = '${_files[filePos]}$checkRank';
-        if(!isLegalMove(targetSquare, square)) {
+        if(!isLegalMove('B', targetSquare, square)) {
           break;
         }
       }
@@ -167,7 +167,111 @@ class GameState {
           break;
         }
         targetSquare = '${_files[filePos]}$checkRank';
-        if(!isLegalMove(targetSquare, square)) {
+        if(!isLegalMove('B', targetSquare, square)) {
+          break;
+        }
+      }
+    } else if (piece.type == PieceType.queen && piece.player == turnPlayer) {
+      //Queen 
+      //Right Top-Right
+      int checkRank = rank;
+      bool stopVertical, stopHorizontal = false, stopDiagonal = false;
+      for (int filePos = _files.indexOf(file) + 1; filePos < _files.length; filePos++) {
+        //horizontal right
+        if(!stopHorizontal) {
+           targetSquare = '${_files[filePos]}$rank';
+          if(!isLegalMove('Q', targetSquare, square)) {
+            stopHorizontal = true;
+          }
+        }
+        //diagonal top right
+        checkRank++;
+        if (checkRank > 8) {
+          continue;
+        }
+        if(!stopDiagonal) {
+          targetSquare = '${_files[filePos]}$checkRank';
+          if(!isLegalMove('Q', targetSquare, square)) {
+            stopDiagonal = true; 
+          }
+        }
+        if (stopHorizontal && stopDiagonal) {
+          break;
+        }
+      }
+      checkRank = rank;
+      stopVertical = false; 
+      stopDiagonal = false;
+      for (int checkRank = rank + 1; checkRank <= 8; checkRank++) {
+        //vertical up
+        if(!stopVertical) {
+          targetSquare = '$file$checkRank';
+          if(!isLegalMove('Q', targetSquare, square)) {
+            stopVertical = true;
+          }
+        }
+        //diagonal top left
+        targetSquare = '${file.shiftFile(rank-checkRank)}$checkRank';
+        if (!Board.isValidSquare(targetSquare)) {
+          continue;
+        }
+        if(!stopDiagonal) {
+          if(!isLegalMove('Q', targetSquare, square)) {
+            stopDiagonal = true; 
+          }
+        }
+        if (stopVertical && stopDiagonal) {
+          break;
+        }
+      }
+      checkRank = rank; 
+      stopHorizontal = false; 
+      stopDiagonal = false;
+      for (int filePos = _files.indexOf(file) - 1; filePos >= 0; filePos--) {    
+        //horizontal left
+        if(!stopHorizontal) {
+           targetSquare = '${_files[filePos]}$rank';
+          if(!isLegalMove('Q', targetSquare, square)) {
+            stopHorizontal = true;
+          }
+        }
+        //diagonal bottom left
+        checkRank--;
+        if (checkRank <= 0) {
+          continue;
+        }
+        if(!stopDiagonal) {
+          targetSquare = '${_files[filePos]}$checkRank';
+          if(!isLegalMove('Q', targetSquare, square)) {
+            stopDiagonal = true; 
+          }
+        }
+        if (stopHorizontal && stopDiagonal) {
+          break;
+        }
+      }
+      checkRank = rank;
+      stopVertical = false; 
+      stopDiagonal = false;
+      for (int checkRank = rank - 1; checkRank > 0; checkRank--) {
+        //vertical down
+        if(!stopVertical) {
+          targetSquare = '$file$checkRank';
+          if(!isLegalMove('Q', targetSquare, square)) {
+            stopVertical = true;
+          }
+        }
+        //diagonal bottom right
+        targetSquare = '${file.shiftFile(rank-checkRank)}$checkRank';
+        if (!Board.isValidSquare(targetSquare)) {
+          continue;
+        }
+        if(!stopDiagonal) {  
+          if(!isLegalMove('Q', targetSquare, square) || !Board.isValidSquare(targetSquare)) {
+            stopDiagonal = true; 
+          }
+        }
+        if (stopVertical && stopDiagonal) {
           break;
         }
       }
