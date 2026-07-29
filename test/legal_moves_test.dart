@@ -489,6 +489,60 @@ void main() {
       expect(gamestate.legalMoves, contains(const Move(PieceType.king, 'd4', 'e4')));
       expect(gamestate.legalMoves, contains(const Move(PieceType.king, 'd4', 'e5')));
     });
+
+    test('When in check, player can only make moves that resolve check (block, capture, or move King)', () {
+      final gamestate = GameState.atPosition(Player.white, [
+        [__, __, __, __, bR, __, __, bK], // R0 = Rank 8: e8 (bR - checking wK at e1), h8 (bK)
+        [__, __, __, __, __, __, __, __], // R1 = Rank 7
+        [__, __, __, __, __, __, __, __], // R2 = Rank 6
+        [__, __, __, __, __, __, __, __], // R3 = Rank 5
+        [wR, __, __, __, __, __, __, __], // R4 = Rank 4: a4 (wR - can block at e4)
+        [__, __, __, __, __, __, __, __], // R5 = Rank 3
+        [__, __, __, __, __, __, __, __], // R6 = Rank 2
+        [wB, __, __, __, wK, __, __, __], // R7 = Rank 1: a1 (wB - can block at e5), e1 (wK - in check)
+      ]);
+      gamestate.calculateLegalMoves();
+
+      // wR at a4 can block check by moving to e4
+      expect(gamestate.legalMoves, contains(const Move(PieceType.rook, 'a4', 'e4')));
+
+      // wB at a1 can block check by moving to e5
+      expect(gamestate.legalMoves, contains(const Move(PieceType.bishop, 'a1', 'e5')));
+
+      // wR at a4 CANNOT make non-blocking move like a5
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.rook, 'a4', 'a5'))));
+
+      // wB at a1 CANNOT make non-blocking move like b2
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.bishop, 'a1', 'b2'))));
+
+      // wK at e1 can move out of check to d1, d2, f1, f2
+      expect(gamestate.legalMoves, contains(const Move(PieceType.king, 'e1', 'd1')));
+      expect(gamestate.legalMoves, contains(const Move(PieceType.king, 'e1', 'd2')));
+
+      // wK at e1 CANNOT move along checking e-file to e2
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.king, 'e1', 'e2'))));
+    });
+
+    test('When in check, capturing the checking piece is allowed to resolve check', () {
+      final gamestate = GameState.atPosition(Player.white, [
+        [__, __, __, __, __, __, __, bK], // R0 = Rank 8: h8 (bK)
+        [__, __, __, __, __, __, __, __], // R1 = Rank 7
+        [__, __, __, __, __, __, __, __], // R2 = Rank 6
+        [__, __, __, __, __, __, __, __], // R3 = Rank 5
+        [__, __, __, __, bQ, __, __, __], // R4 = Rank 4: e4 (bQ - checking wK at e1)
+        [__, __, wN, __, __, __, __, __], // R5 = Rank 3: c3 (wN - can capture bQ at e4)
+        [__, __, __, __, __, __, __, __], // R6 = Rank 2
+        [__, __, __, __, wK, __, __, __], // R7 = Rank 1: e1 (wK - in check)
+      ]);
+      gamestate.calculateLegalMoves();
+
+      // wN at c3 CAN capture checking bQ at e4 (c3 -> e4: +2 files, +1 rank)
+      expect(gamestate.legalMoves, contains(const Move(PieceType.knight, 'c3', 'e4')));
+
+      // wN at c3 CANNOT move to non-resolving squares like b5 or a4
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.knight, 'c3', 'b5'))));
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.knight, 'c3', 'a4'))));
+    });
   });
 
   group('Pinned Piece Restrictions (Chess Rules)', () {

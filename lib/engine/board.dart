@@ -20,6 +20,10 @@ class Board {
     _grid = grid;
   }
 
+  Board clone() {
+    return Board.position(_grid.map((row) => List<Piece?>.from(row)).toList());
+  }
+
   static bool isValidSquare(String square) {
     final RegExp exp = RegExp(r'^[a-h][1-8]$');
     return exp.hasMatch(square);
@@ -50,5 +54,11 @@ class Board {
     if (row != -1) {
       _grid[row][col] = piece;
     }
+  }
+
+  void applyMove(Move move) {
+    final piece = this[move.startSquare];
+    this[move.startSquare] = null;
+    this[move.endSquare] = piece;
   }
 }

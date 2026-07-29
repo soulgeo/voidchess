@@ -11,24 +11,48 @@ class GameState {
 
   var board = Board();
   var turnPlayer = Player.white;
+  List<Move> candidateMoves = [];
   List<Move> legalMoves = [];
 
   GameState();
   GameState.atPosition(this.turnPlayer, List<List<Piece?>> grid) {
     board = Board.position(grid);
   }
+  GameState.next(GameState current, Move move) {
+    board = current.board.clone();
+    board.applyMove(move);
+    turnPlayer = current.turnPlayer * (-1);
+  }
   
   bool hasFriendlyPiece(String sqr) => board[sqr]?.player == turnPlayer;
 
   void calculateLegalMoves() {
+    _calculateCandidateMoves();
+    candidateMoves.removeWhere((move) {
+      var next = GameState.next(this, move);
+      next._calculateCandidateMoves();
+      
+      for (var nextMove in next.candidateMoves) {
+        final piece = next.board[nextMove.endSquare];
+        if (piece?.type == PieceType.king && piece?.player == turnPlayer) {
+          return true;
+        }
+      }
+      return false;
+    });
+
+    legalMoves = candidateMoves;
+  }
+
+  void _calculateCandidateMoves() {
     for (var file in _files) {
       for (int rank = 1; rank <= 8; rank++) {
-        _pieceLegalMoves(file, rank);
+        _pieceCandidateMoves(file, rank);
       }
     }
   }
 
-  void _pieceLegalMoves(ChessFile file, int rank) {
+  void _pieceCandidateMoves(ChessFile file, int rank) {
     final square = '$file$rank';
     final piece = board[square];
 
@@ -45,11 +69,13 @@ class GameState {
       _bishopMoves(file, rank);
     } else if (piece.type == PieceType.queen) {
       _queenMoves(file, rank);
+    } else if (piece.type == PieceType.king) {
+      _kingMoves(file, rank);
     }
   }
 
-  void _addLegalMove(PieceType type, String startSquare, String endSquare) {
-    legalMoves.add(Move(type, startSquare, endSquare));
+  void _addCandidateMove(PieceType type, String startSquare, String endSquare) {
+    candidateMoves.add(Move(type, startSquare, endSquare));
   }
 
   bool _addDirectionalMove(PieceType type, String targetSquare, String square) {
@@ -58,13 +84,13 @@ class GameState {
       throw ArgumentError("Invalid piece type for directional move");
     }
     if (board[targetSquare] == null ) {
-      _addLegalMove(type, square, targetSquare);
+      _addCandidateMove(type, square, targetSquare);
       return true;
     }
     if(hasFriendlyPiece(targetSquare)) {
       return false;
     } else {  // Has Enemy Piece
-      _addLegalMove(type, square, targetSquare);
+      _addCandidateMove(type, square, targetSquare);
       return false;
     }
   }
@@ -73,21 +99,21 @@ class GameState {
     final square = '$file$rank';
     var targetSquare = '$file${rank + turnPlayer.number}';
     if (board[targetSquare] == null) {
-      _addLegalMove(PieceType.pawn, square, targetSquare);
+      _addCandidateMove(PieceType.pawn, square, targetSquare);
       if (rank*turnPlayer.number == 2 || rank*turnPlayer.number == -7) {
         targetSquare = '$file${rank + 2*turnPlayer.number}';
         if (board[targetSquare] == null) {
-          _addLegalMove(PieceType.pawn, square, targetSquare);
+          _addCandidateMove(PieceType.pawn, square, targetSquare);
         }
       }
     }
     targetSquare = '${file - 1}${rank + turnPlayer.number}';
     if (board[targetSquare]?.player == turnPlayer*(-1)) {
-      _addLegalMove(PieceType.pawn, square, targetSquare);
+      _addCandidateMove(PieceType.pawn, square, targetSquare);
     }
     targetSquare = '${file + 1}${rank + turnPlayer.number}';
     if (board[targetSquare]?.player == turnPlayer*(-1)) {
-      _addLegalMove(PieceType.pawn, square, targetSquare);
+      _addCandidateMove(PieceType.pawn, square, targetSquare);
     }
   }
 
@@ -109,7 +135,7 @@ class GameState {
       targetSquare = '${file + a}${rank + b}';
       if (Board.isValidSquare(targetSquare) &&
           !hasFriendlyPiece(targetSquare)) {
-        _addLegalMove(PieceType.knight, square, targetSquare);
+        _addCandidateMove(PieceType.knight, square, targetSquare);
       }
     }
   }
@@ -304,6 +330,28 @@ class GameState {
       }
       if (stopVertical && stopDiagonal) {
         break;
+      }
+    }
+  }
+
+  void _kingMoves(ChessFile file, int rank) {
+    final square = '$file$rank';
+    final shifts = [
+      (-1, -1),
+      (-1, 0),
+      (-1, 1),
+      (0, -1),
+      (0, 1),
+      (1, -1),
+      (1, 0),
+      (1, 1),
+    ];
+    var targetSquare = '';
+    for (var (a, b) in shifts) {
+      targetSquare = '${file + a}${rank + b}';
+      if (Board.isValidSquare(targetSquare) &&
+          !hasFriendlyPiece(targetSquare)) {
+        _addCandidateMove(PieceType.king, square, targetSquare);
       }
     }
   }
