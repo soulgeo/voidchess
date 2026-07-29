@@ -11,7 +11,7 @@ class GameState {
 
   var board = Board();
   var turnPlayer = Player.white;
-  List<String> legalMoves = [];
+  List<Move> legalMoves = [];
 
   GameState();
   GameState.atPosition(this.turnPlayer, List<List<Piece?>> grid) {
@@ -48,17 +48,8 @@ class GameState {
     }
   }
 
-  String _pieceToInitial(PieceType type) {
-    if (type == PieceType.pawn) return 'p';
-    if (type == PieceType.knight) return 'N';
-    if (type == PieceType.bishop) return 'B';
-    if (type == PieceType.rook) return 'R';
-    if (type == PieceType.queen) return 'Q';
-    return 'K';
-  }
-
   void _addLegalMove(PieceType type, String startSquare, String endSquare) {
-    legalMoves.add('${_pieceToInitial(type)}_${startSquare}_$endSquare');
+    legalMoves.add(Move(type, startSquare, endSquare));
   }
 
   bool _addDirectionalMove(PieceType type, String targetSquare, String square) {

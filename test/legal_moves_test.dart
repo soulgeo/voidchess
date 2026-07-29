@@ -13,27 +13,32 @@ void main() {
 
       expect(gamestate.legalMoves.length, equals(20));
 
-      final pawnMoves = gamestate.legalMoves.where((m) => m.startsWith('p_')).toList();
+      final pawnMoves = gamestate.legalMoves.where((m) => m.type == PieceType.pawn).toList();
       expect(pawnMoves.length, equals(16));
       expect(
         pawnMoves,
         containsAll([
-          'p_a2_a3', 'p_a2_a4',
-          'p_b2_b3', 'p_b2_b4',
-          'p_c2_c3', 'p_c2_c4',
-          'p_d2_d3', 'p_d2_d4',
-          'p_e2_e3', 'p_e2_e4',
-          'p_f2_f3', 'p_f2_f4',
-          'p_g2_g3', 'p_g2_g4',
-          'p_h2_h3', 'p_h2_h4',
+          const Move(PieceType.pawn, 'a2', 'a3'), const Move(PieceType.pawn, 'a2', 'a4'),
+          const Move(PieceType.pawn, 'b2', 'b3'), const Move(PieceType.pawn, 'b2', 'b4'),
+          const Move(PieceType.pawn, 'c2', 'c3'), const Move(PieceType.pawn, 'c2', 'c4'),
+          const Move(PieceType.pawn, 'd2', 'd3'), const Move(PieceType.pawn, 'd2', 'd4'),
+          const Move(PieceType.pawn, 'e2', 'e3'), const Move(PieceType.pawn, 'e2', 'e4'),
+          const Move(PieceType.pawn, 'f2', 'f3'), const Move(PieceType.pawn, 'f2', 'f4'),
+          const Move(PieceType.pawn, 'g2', 'g3'), const Move(PieceType.pawn, 'g2', 'g4'),
+          const Move(PieceType.pawn, 'h2', 'h3'), const Move(PieceType.pawn, 'h2', 'h4'),
         ]),
       );
 
-      final knightMoves = gamestate.legalMoves.where((m) => m.startsWith('N_')).toList();
+      final knightMoves = gamestate.legalMoves.where((m) => m.type == PieceType.knight).toList();
       expect(knightMoves.length, equals(4));
       expect(
         knightMoves,
-        containsAll(['N_b1_a3', 'N_b1_c3', 'N_g1_f3', 'N_g1_h3']),
+        containsAll([
+          const Move(PieceType.knight, 'b1', 'a3'),
+          const Move(PieceType.knight, 'b1', 'c3'),
+          const Move(PieceType.knight, 'g1', 'f3'),
+          const Move(PieceType.knight, 'g1', 'h3'),
+        ]),
       );
     });
 
@@ -52,27 +57,32 @@ void main() {
 
       expect(gamestate.legalMoves.length, equals(20));
 
-      final pawnMoves = gamestate.legalMoves.where((m) => m.startsWith('p_')).toList();
+      final pawnMoves = gamestate.legalMoves.where((m) => m.type == PieceType.pawn).toList();
       expect(pawnMoves.length, equals(16));
       expect(
         pawnMoves,
         containsAll([
-          'p_a7_a6', 'p_a7_a5',
-          'p_b7_b6', 'p_b7_b5',
-          'p_c7_c6', 'p_c7_c5',
-          'p_d7_d6', 'p_d7_d5',
-          'p_e7_e6', 'p_e7_e5',
-          'p_f7_f6', 'p_f7_f5',
-          'p_g7_g6', 'p_g7_g5',
-          'p_h7_h6', 'p_h7_h5',
+          const Move(PieceType.pawn, 'a7', 'a6'), const Move(PieceType.pawn, 'a7', 'a5'),
+          const Move(PieceType.pawn, 'b7', 'b6'), const Move(PieceType.pawn, 'b7', 'b5'),
+          const Move(PieceType.pawn, 'c7', 'c6'), const Move(PieceType.pawn, 'c7', 'c5'),
+          const Move(PieceType.pawn, 'd7', 'd6'), const Move(PieceType.pawn, 'd7', 'd5'),
+          const Move(PieceType.pawn, 'e7', 'e6'), const Move(PieceType.pawn, 'e7', 'e5'),
+          const Move(PieceType.pawn, 'f7', 'f6'), const Move(PieceType.pawn, 'f7', 'f5'),
+          const Move(PieceType.pawn, 'g7', 'g6'), const Move(PieceType.pawn, 'g7', 'g5'),
+          const Move(PieceType.pawn, 'h7', 'h6'), const Move(PieceType.pawn, 'h7', 'h5'),
         ]),
       );
 
-      final knightMoves = gamestate.legalMoves.where((m) => m.startsWith('N_')).toList();
+      final knightMoves = gamestate.legalMoves.where((m) => m.type == PieceType.knight).toList();
       expect(knightMoves.length, equals(4));
       expect(
         knightMoves,
-        containsAll(['N_b8_a6', 'N_b8_c6', 'N_g8_f6', 'N_g8_h6']),
+        containsAll([
+          const Move(PieceType.knight, 'b8', 'a6'),
+          const Move(PieceType.knight, 'b8', 'c6'),
+          const Move(PieceType.knight, 'g8', 'f6'),
+          const Move(PieceType.knight, 'g8', 'h6'),
+        ]),
       );
     });
   });
@@ -90,8 +100,11 @@ void main() {
         [wK, __, __, __, __, __, __, __], // R7 = Rank 1 (wK at a1)
       ]);
       gamestate.calculateLegalMoves();
-      final pawnMoves = gamestate.legalMoves.where((m) => m.startsWith('p_')).toList();
-      expect(pawnMoves, unorderedEquals(['p_e2_e3', 'p_e2_e4']));
+      final pawnMoves = gamestate.legalMoves.where((m) => m.type == PieceType.pawn).toList();
+      expect(pawnMoves, unorderedEquals([
+        const Move(PieceType.pawn, 'e2', 'e3'),
+        const Move(PieceType.pawn, 'e2', 'e4'),
+      ]));
     });
 
     test('White pawn single step only on non-initial rank', () {
@@ -106,8 +119,8 @@ void main() {
         [wK, __, __, __, __, __, __, __], // R7 = Rank 1 (wK at a1)
       ]);
       gamestate.calculateLegalMoves();
-      final pawnMoves = gamestate.legalMoves.where((m) => m.startsWith('p_')).toList();
-      expect(pawnMoves, equals(['p_e5_e6']));
+      final pawnMoves = gamestate.legalMoves.where((m) => m.type == PieceType.pawn).toList();
+      expect(pawnMoves, equals([const Move(PieceType.pawn, 'e5', 'e6')]));
     });
 
     test('White pawn blocked forward by enemy piece cannot move forward', () {
@@ -122,8 +135,8 @@ void main() {
         [wK, __, __, __, __, __, __, __], // R7 = Rank 1 (wK at a1)
       ]);
       gamestate.calculateLegalMoves();
-      expect(gamestate.legalMoves, isNot(contains('p_e2_e3')));
-      expect(gamestate.legalMoves, isNot(contains('p_e2_e4')));
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.pawn, 'e2', 'e3'))));
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.pawn, 'e2', 'e4'))));
     });
 
     test('White pawn diagonal capture of enemy pieces', () {
@@ -139,9 +152,9 @@ void main() {
       ]);
       gamestate.calculateLegalMoves();
 
-      expect(gamestate.legalMoves, contains('p_e4_d5'));
-      expect(gamestate.legalMoves, contains('p_e4_f5'));
-      expect(gamestate.legalMoves, contains('p_e4_e5'));
+      expect(gamestate.legalMoves, contains(const Move(PieceType.pawn, 'e4', 'd5')));
+      expect(gamestate.legalMoves, contains(const Move(PieceType.pawn, 'e4', 'f5')));
+      expect(gamestate.legalMoves, contains(const Move(PieceType.pawn, 'e4', 'e5')));
     });
 
     test('White pawn cannot move diagonally to empty or friendly squares', () {
@@ -157,8 +170,8 @@ void main() {
       ]);
       gamestate.calculateLegalMoves();
 
-      expect(gamestate.legalMoves, isNot(contains('p_e4_d5'))); // friendly square
-      expect(gamestate.legalMoves, isNot(contains('p_e4_f5'))); // empty square
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.pawn, 'e4', 'd5')))); // friendly square
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.pawn, 'e4', 'f5')))); // empty square
     });
 
     test('Black pawn diagonal capture of enemy piece', () {
@@ -174,8 +187,8 @@ void main() {
       ]);
       gamestate.calculateLegalMoves();
 
-      expect(gamestate.legalMoves, contains('p_d6_c5'));
-      expect(gamestate.legalMoves, contains('p_d6_d5'));
+      expect(gamestate.legalMoves, contains(const Move(PieceType.pawn, 'd6', 'c5')));
+      expect(gamestate.legalMoves, contains(const Move(PieceType.pawn, 'd6', 'd5')));
     });
   });
 
@@ -193,12 +206,12 @@ void main() {
       ]);
       gamestate.calculateLegalMoves();
       expect(
-        gamestate.legalMoves.where((m) => m.startsWith('N_')).toList(),
+        gamestate.legalMoves.where((m) => m.type == PieceType.knight).toList(),
         unorderedEquals([
-          'N_d5_c7', 'N_d5_e7',
-          'N_d5_b6', 'N_d5_f6',
-          'N_d5_b4', 'N_d5_f4',
-          'N_d5_c3', 'N_d5_e3',
+          const Move(PieceType.knight, 'd5', 'c7'), const Move(PieceType.knight, 'd5', 'e7'),
+          const Move(PieceType.knight, 'd5', 'b6'), const Move(PieceType.knight, 'd5', 'f6'),
+          const Move(PieceType.knight, 'd5', 'b4'), const Move(PieceType.knight, 'd5', 'f4'),
+          const Move(PieceType.knight, 'd5', 'c3'), const Move(PieceType.knight, 'd5', 'e3'),
         ]),
       );
     });
@@ -216,8 +229,11 @@ void main() {
       ]);
       gamestate.calculateLegalMoves();
       expect(
-        gamestate.legalMoves.where((m) => m.startsWith('N_')).toList(),
-        unorderedEquals(['N_a1_b3', 'N_a1_c2']),
+        gamestate.legalMoves.where((m) => m.type == PieceType.knight).toList(),
+        unorderedEquals([
+          const Move(PieceType.knight, 'a1', 'b3'),
+          const Move(PieceType.knight, 'a1', 'c2'),
+        ]),
       );
     });
 
@@ -234,8 +250,8 @@ void main() {
       ]);
       gamestate.calculateLegalMoves();
 
-      expect(gamestate.legalMoves, isNot(contains('N_d4_e6'))); // friendly piece on e6
-      expect(gamestate.legalMoves, contains('N_d4_c6'));        // enemy piece on c6
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.knight, 'd4', 'e6')))); // friendly piece on e6
+      expect(gamestate.legalMoves, contains(const Move(PieceType.knight, 'd4', 'c6')));        // enemy piece on c6
     });
   });
 
@@ -253,12 +269,12 @@ void main() {
       ]);
       gamestate.calculateLegalMoves();
       expect(
-        gamestate.legalMoves.where((m) => m.startsWith('R_')).toList(),
+        gamestate.legalMoves.where((m) => m.type == PieceType.rook).toList(),
         unorderedEquals([
-          'R_d4_d5', 'R_d4_d6', 'R_d4_d7', 'R_d4_d8',
-          'R_d4_d3', 'R_d4_d2', 'R_d4_d1',
-          'R_d4_c4', 'R_d4_b4', 'R_d4_a4',
-          'R_d4_e4', 'R_d4_f4', 'R_d4_g4', 'R_d4_h4',
+          const Move(PieceType.rook, 'd4', 'd5'), const Move(PieceType.rook, 'd4', 'd6'), const Move(PieceType.rook, 'd4', 'd7'), const Move(PieceType.rook, 'd4', 'd8'),
+          const Move(PieceType.rook, 'd4', 'd3'), const Move(PieceType.rook, 'd4', 'd2'), const Move(PieceType.rook, 'd4', 'd1'),
+          const Move(PieceType.rook, 'd4', 'c4'), const Move(PieceType.rook, 'd4', 'b4'), const Move(PieceType.rook, 'd4', 'a4'),
+          const Move(PieceType.rook, 'd4', 'e4'), const Move(PieceType.rook, 'd4', 'f4'), const Move(PieceType.rook, 'd4', 'g4'), const Move(PieceType.rook, 'd4', 'h4'),
         ]),
       );
     });
@@ -276,13 +292,13 @@ void main() {
       ]);
       gamestate.calculateLegalMoves();
 
-      expect(gamestate.legalMoves, contains('R_d4_d5'));
-      expect(gamestate.legalMoves, isNot(contains('R_d4_d6')));
-      expect(gamestate.legalMoves, isNot(contains('R_d4_d7')));
+      expect(gamestate.legalMoves, contains(const Move(PieceType.rook, 'd4', 'd5')));
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.rook, 'd4', 'd6'))));
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.rook, 'd4', 'd7'))));
 
-      expect(gamestate.legalMoves, contains('R_d4_c4'));
-      expect(gamestate.legalMoves, contains('R_d4_b4'));
-      expect(gamestate.legalMoves, isNot(contains('R_d4_a4')));
+      expect(gamestate.legalMoves, contains(const Move(PieceType.rook, 'd4', 'c4')));
+      expect(gamestate.legalMoves, contains(const Move(PieceType.rook, 'd4', 'b4')));
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.rook, 'd4', 'a4'))));
     });
   });
 
@@ -300,12 +316,12 @@ void main() {
       ]);
       gamestate.calculateLegalMoves();
       expect(
-        gamestate.legalMoves.where((m) => m.startsWith('B_')).toList(),
+        gamestate.legalMoves.where((m) => m.type == PieceType.bishop).toList(),
         unorderedEquals([
-          'B_d4_e5', 'B_d4_f6', 'B_d4_g7', 'B_d4_h8',
-          'B_d4_c5', 'B_d4_b6', 'B_d4_a7',
-          'B_d4_c3', 'B_d4_b2', 'B_d4_a1',
-          'B_d4_e3', 'B_d4_f2', 'B_d4_g1',
+          const Move(PieceType.bishop, 'd4', 'e5'), const Move(PieceType.bishop, 'd4', 'f6'), const Move(PieceType.bishop, 'd4', 'g7'), const Move(PieceType.bishop, 'd4', 'h8'),
+          const Move(PieceType.bishop, 'd4', 'c5'), const Move(PieceType.bishop, 'd4', 'b6'), const Move(PieceType.bishop, 'd4', 'a7'),
+          const Move(PieceType.bishop, 'd4', 'c3'), const Move(PieceType.bishop, 'd4', 'b2'), const Move(PieceType.bishop, 'd4', 'a1'),
+          const Move(PieceType.bishop, 'd4', 'e3'), const Move(PieceType.bishop, 'd4', 'f2'), const Move(PieceType.bishop, 'd4', 'g1'),
         ]),
       );
     });
@@ -323,13 +339,13 @@ void main() {
       ]);
       gamestate.calculateLegalMoves();
 
-      expect(gamestate.legalMoves, contains('B_d4_e5'));
-      expect(gamestate.legalMoves, isNot(contains('B_d4_f6')));
-      expect(gamestate.legalMoves, isNot(contains('B_d4_g7')));
+      expect(gamestate.legalMoves, contains(const Move(PieceType.bishop, 'd4', 'e5')));
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.bishop, 'd4', 'f6'))));
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.bishop, 'd4', 'g7'))));
 
-      expect(gamestate.legalMoves, contains('B_d4_c3'));
-      expect(gamestate.legalMoves, contains('B_d4_b2'));
-      expect(gamestate.legalMoves, isNot(contains('B_d4_a1')));
+      expect(gamestate.legalMoves, contains(const Move(PieceType.bishop, 'd4', 'c3')));
+      expect(gamestate.legalMoves, contains(const Move(PieceType.bishop, 'd4', 'b2')));
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.bishop, 'd4', 'a1'))));
     });
   });
 
@@ -347,16 +363,16 @@ void main() {
       ]);
       gamestate.calculateLegalMoves();
       expect(
-        gamestate.legalMoves.where((m) => m.startsWith('Q_')).toList(),
+        gamestate.legalMoves.where((m) => m.type == PieceType.queen).toList(),
         unorderedEquals([
-          'Q_d4_d5', 'Q_d4_d6', 'Q_d4_d7', 'Q_d4_d8',
-          'Q_d4_d3', 'Q_d4_d2', 'Q_d4_d1',
-          'Q_d4_c4', 'Q_d4_b4', 'Q_d4_a4',
-          'Q_d4_e4', 'Q_d4_f4', 'Q_d4_g4', 'Q_d4_h4',
-          'Q_d4_e5', 'Q_d4_f6', 'Q_d4_g7', 'Q_d4_h8',
-          'Q_d4_c5', 'Q_d4_b6', 'Q_d4_a7',
-          'Q_d4_c3', 'Q_d4_b2', 'Q_d4_a1',
-          'Q_d4_e3', 'Q_d4_f2', 'Q_d4_g1',
+          const Move(PieceType.queen, 'd4', 'd5'), const Move(PieceType.queen, 'd4', 'd6'), const Move(PieceType.queen, 'd4', 'd7'), const Move(PieceType.queen, 'd4', 'd8'),
+          const Move(PieceType.queen, 'd4', 'd3'), const Move(PieceType.queen, 'd4', 'd2'), const Move(PieceType.queen, 'd4', 'd1'),
+          const Move(PieceType.queen, 'd4', 'c4'), const Move(PieceType.queen, 'd4', 'b4'), const Move(PieceType.queen, 'd4', 'a4'),
+          const Move(PieceType.queen, 'd4', 'e4'), const Move(PieceType.queen, 'd4', 'f4'), const Move(PieceType.queen, 'd4', 'g4'), const Move(PieceType.queen, 'd4', 'h4'),
+          const Move(PieceType.queen, 'd4', 'e5'), const Move(PieceType.queen, 'd4', 'f6'), const Move(PieceType.queen, 'd4', 'g7'), const Move(PieceType.queen, 'd4', 'h8'),
+          const Move(PieceType.queen, 'd4', 'c5'), const Move(PieceType.queen, 'd4', 'b6'), const Move(PieceType.queen, 'd4', 'a7'),
+          const Move(PieceType.queen, 'd4', 'c3'), const Move(PieceType.queen, 'd4', 'b2'), const Move(PieceType.queen, 'd4', 'a1'),
+          const Move(PieceType.queen, 'd4', 'e3'), const Move(PieceType.queen, 'd4', 'f2'), const Move(PieceType.queen, 'd4', 'g1'),
         ]),
       );
     });
@@ -374,12 +390,12 @@ void main() {
       ]);
       gamestate.calculateLegalMoves();
 
-      expect(gamestate.legalMoves, contains('Q_d4_d5'));
-      expect(gamestate.legalMoves, isNot(contains('Q_d4_d6')));
+      expect(gamestate.legalMoves, contains(const Move(PieceType.queen, 'd4', 'd5')));
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.queen, 'd4', 'd6'))));
 
-      expect(gamestate.legalMoves, contains('Q_d4_e4'));
-      expect(gamestate.legalMoves, contains('Q_d4_f4'));
-      expect(gamestate.legalMoves, isNot(contains('Q_d4_g4')));
+      expect(gamestate.legalMoves, contains(const Move(PieceType.queen, 'd4', 'e4')));
+      expect(gamestate.legalMoves, contains(const Move(PieceType.queen, 'd4', 'f4')));
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.queen, 'd4', 'g4'))));
     });
   });
 
@@ -397,11 +413,11 @@ void main() {
       ]);
       gamestate.calculateLegalMoves();
       expect(
-        gamestate.legalMoves.where((m) => m.startsWith('K_')).toList(),
+        gamestate.legalMoves.where((m) => m.type == PieceType.king).toList(),
         unorderedEquals([
-          'K_d4_c5', 'K_d4_d5', 'K_d4_e5',
-          'K_d4_c4',           'K_d4_e4',
-          'K_d4_c3', 'K_d4_d3', 'K_d4_e3',
+          const Move(PieceType.king, 'd4', 'c5'), const Move(PieceType.king, 'd4', 'd5'), const Move(PieceType.king, 'd4', 'e5'),
+          const Move(PieceType.king, 'd4', 'c4'),                                        const Move(PieceType.king, 'd4', 'e4'),
+          const Move(PieceType.king, 'd4', 'c3'), const Move(PieceType.king, 'd4', 'd3'), const Move(PieceType.king, 'd4', 'e3'),
         ]),
       );
     });
@@ -419,8 +435,12 @@ void main() {
       ]);
       gamestate.calculateLegalMoves();
       expect(
-        gamestate.legalMoves.where((m) => m.startsWith('K_')).toList(),
-        unorderedEquals(['K_a1_a2', 'K_a1_b2', 'K_a1_b1']),
+        gamestate.legalMoves.where((m) => m.type == PieceType.king).toList(),
+        unorderedEquals([
+          const Move(PieceType.king, 'a1', 'a2'),
+          const Move(PieceType.king, 'a1', 'b2'),
+          const Move(PieceType.king, 'a1', 'b1'),
+        ]),
       );
     });
 
@@ -437,8 +457,8 @@ void main() {
       ]);
       gamestate.calculateLegalMoves();
 
-      expect(gamestate.legalMoves, isNot(contains('K_d4_e5'))); // friendly piece on e5
-      expect(gamestate.legalMoves, contains('K_d4_c5'));        // enemy piece on c5 (capture)
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.king, 'd4', 'e5')))); // friendly piece on e5
+      expect(gamestate.legalMoves, contains(const Move(PieceType.king, 'd4', 'c5')));        // enemy piece on c5 (capture)
     });
   });
 
@@ -458,16 +478,16 @@ void main() {
 
       // bR at c8 controls c-file (c1-c8).
       // wK at d4 CANNOT move to c3, c4, c5 because those squares are in check.
-      expect(gamestate.legalMoves, isNot(contains('K_d4_c3')));
-      expect(gamestate.legalMoves, isNot(contains('K_d4_c4')));
-      expect(gamestate.legalMoves, isNot(contains('K_d4_c5')));
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.king, 'd4', 'c3'))));
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.king, 'd4', 'c4'))));
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.king, 'd4', 'c5'))));
 
       // wK at d4 CAN move to unattacked squares (d3, d5, e3, e4, e5)
-      expect(gamestate.legalMoves, contains('K_d4_d3'));
-      expect(gamestate.legalMoves, contains('K_d4_d5'));
-      expect(gamestate.legalMoves, contains('K_d4_e3'));
-      expect(gamestate.legalMoves, contains('K_d4_e4'));
-      expect(gamestate.legalMoves, contains('K_d4_e5'));
+      expect(gamestate.legalMoves, contains(const Move(PieceType.king, 'd4', 'd3')));
+      expect(gamestate.legalMoves, contains(const Move(PieceType.king, 'd4', 'd5')));
+      expect(gamestate.legalMoves, contains(const Move(PieceType.king, 'd4', 'e3')));
+      expect(gamestate.legalMoves, contains(const Move(PieceType.king, 'd4', 'e4')));
+      expect(gamestate.legalMoves, contains(const Move(PieceType.king, 'd4', 'e5')));
     });
   });
 
@@ -487,12 +507,12 @@ void main() {
 
       // wR at e4 is pinned to wK at e1 by bR at e8.
       // Moving wR off the e-file (e.g. to d4 or f4) would expose wK to check.
-      expect(gamestate.legalMoves, isNot(contains('R_e4_d4')));
-      expect(gamestate.legalMoves, isNot(contains('R_e4_f4')));
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.rook, 'e4', 'd4'))));
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.rook, 'e4', 'f4'))));
 
       // Moving along the pin ray (e.g. e2, e3, e5, e6, e7, e8) keeps King protected.
-      expect(gamestate.legalMoves, contains('R_e4_e5'));
-      expect(gamestate.legalMoves, contains('R_e4_e8')); // capture checking bR
+      expect(gamestate.legalMoves, contains(const Move(PieceType.rook, 'e4', 'e5')));
+      expect(gamestate.legalMoves, contains(const Move(PieceType.rook, 'e4', 'e8'))); // capture checking bR
     });
 
     test('Piece pinned diagonally to King cannot move off diagonal pin ray', () {
@@ -510,12 +530,12 @@ void main() {
 
       // wB at d2 is pinned on a5-e1 diagonal.
       // Moving wB to e3 or f4 exposes wK to bB at a5.
-      expect(gamestate.legalMoves, isNot(contains('B_d2_e3')));
-      expect(gamestate.legalMoves, isNot(contains('B_d2_f4')));
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.bishop, 'd2', 'e3'))));
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.bishop, 'd2', 'f4'))));
 
       // Moving along the pin diagonal (c3, b4, a5) is allowed.
-      expect(gamestate.legalMoves, contains('B_d2_c3'));
-      expect(gamestate.legalMoves, contains('B_d2_a5')); // capture pinning bB
+      expect(gamestate.legalMoves, contains(const Move(PieceType.bishop, 'd2', 'c3')));
+      expect(gamestate.legalMoves, contains(const Move(PieceType.bishop, 'd2', 'a5'))); // capture pinning bB
     });
   });
 }

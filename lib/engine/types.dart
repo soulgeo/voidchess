@@ -37,3 +37,26 @@ const bN = Piece(Player.black, PieceType.knight);
 const bB = Piece(Player.black, PieceType.bishop);
 const bQ = Piece(Player.black, PieceType.queen);
 const bK = Piece(Player.black, PieceType.king);
+
+class Move {
+  final PieceType type;
+  final String startSquare;
+  final String endSquare;
+
+  const Move(this.type, this.startSquare, this.endSquare);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Move &&
+          runtimeType == other.runtimeType &&
+          type == other.type &&
+          startSquare == other.startSquare &&
+          endSquare == other.endSquare;
+
+  @override
+  int get hashCode => Object.hash(type, startSquare, endSquare);
+
+  @override
+  String toString() => 'Move($type, $startSquare, $endSquare)';
+}
