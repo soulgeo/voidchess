@@ -45,6 +45,19 @@ class GameState {
     }
   }
 
+  String _pieceToInitial(PieceType type) {
+    if (type == PieceType.pawn) return 'p';
+    if (type == PieceType.knight) return 'N';
+    if (type == PieceType.bishop) return 'B';
+    if (type == PieceType.rook) return 'R';
+    if (type == PieceType.queen) return 'Q';
+    return 'K';
+  }
+
+  void _addLegalMove(PieceType type, String startSquare, String endSquare) {
+    legalMoves.add('${_pieceToInitial(type)}_${startSquare}_$endSquare');
+  }
+
   bool _isLegalMove(String piece, String targetSquare, String square) {
     if (board[targetSquare] == null ) {
       legalMoves.add('${piece}_${square}_$targetSquare');
@@ -63,27 +76,41 @@ class GameState {
     if (player == Player.white) {
       var targetSquare = '$file${rank + 1}';
       if (board[targetSquare] == null) {
-        legalMoves.add('p_${square}_$targetSquare');
+        _addLegalMove(PieceType.pawn, square, targetSquare);
         if (rank == 2) {
           targetSquare = '$file${rank + 2}';
           if (board[targetSquare] == null) {
-            legalMoves.add('p_${square}_$targetSquare');
+            _addLegalMove(PieceType.pawn, square, targetSquare);
           }
         }
       }
-    } else if (player == Player.black) {
+      targetSquare = '${file.shiftFile(-1)}${rank + 1}';
+      if (board[targetSquare]?.player == Player.black) {
+        _addLegalMove(PieceType.pawn, square, targetSquare);
+      }
+      targetSquare = '${file.shiftFile(1)}${rank + 1}';
+      if (board[targetSquare]?.player == Player.black) {
+        _addLegalMove(PieceType.pawn, square, targetSquare);
+      }
+    } else {
       var targetSquare = '$file${rank - 1}';
       if (board[targetSquare] == null) {
-        legalMoves.add('p_${square}_$targetSquare');
+        _addLegalMove(PieceType.pawn, square, targetSquare);
         if (rank == 7) {
           targetSquare = '$file${rank - 2}';
           if (board[targetSquare] == null) {
-            legalMoves.add('p_${square}_$targetSquare');
+            _addLegalMove(PieceType.pawn, square, targetSquare);
           }
         }
       }
-    } else {
-      throw ArgumentError("Invalid player");
+      targetSquare = '${file.shiftFile(-1)}${rank - 1}';
+      if (board[targetSquare]?.player == Player.white) {
+        _addLegalMove(PieceType.pawn, square, targetSquare);
+      }
+      targetSquare = '${file.shiftFile(1)}${rank - 1}';
+      if (board[targetSquare]?.player == Player.white) {
+        _addLegalMove(PieceType.pawn, square, targetSquare);
+      }
     }
   }
 
@@ -105,7 +132,7 @@ class GameState {
       targetSquare = '${file.shiftFile(a)}${rank + b}';
       if (Board.isValidSquare(targetSquare) &&
           !hasFriendlyPiece(targetSquare)) {
-        legalMoves.add('N_${square}_$targetSquare');
+        _addLegalMove(PieceType.knight, square, targetSquare);
       }
     }
   }
