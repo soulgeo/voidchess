@@ -1,10 +1,13 @@
 import 'util.dart';
-import 'pieces.dart';
+import 'types.dart';
 import 'board.dart';
 
 
 class GameState {
-  final _files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+  final _files = [
+    ChessFile('a'), ChessFile('b'), ChessFile('c'), ChessFile('d'),
+    ChessFile('e'), ChessFile('f'), ChessFile('g'), ChessFile('h')
+  ];
 
   var board = Board();
   var turnPlayer = Player.white;
@@ -18,14 +21,14 @@ class GameState {
   bool hasFriendlyPiece(String sqr) => board[sqr]?.player == turnPlayer;
 
   void calculateLegalMoves() {
-    for (String file in _files) {
+    for (var file in _files) {
       for (int rank = 1; rank <= 8; rank++) {
         _pieceLegalMoves(file, rank);
       }
     }
   }
 
-  void _pieceLegalMoves(String file, int rank) {
+  void _pieceLegalMoves(ChessFile file, int rank) {
     final square = '$file$rank';
     final piece = board[square];
 
@@ -58,63 +61,46 @@ class GameState {
     legalMoves.add('${_pieceToInitial(type)}_${startSquare}_$endSquare');
   }
 
-  bool _isLegalMove(String piece, String targetSquare, String square) {
+  bool _addDirectionalMove(PieceType type, String targetSquare, String square) {
+    var validTypes = [PieceType.queen, PieceType.rook, PieceType.bishop];
+    if (!validTypes.contains(type)) {
+      throw ArgumentError("Invalid piece type for directional move");
+    }
     if (board[targetSquare] == null ) {
-      legalMoves.add('${piece}_${square}_$targetSquare');
+      _addLegalMove(type, square, targetSquare);
       return true;
     }
     if(hasFriendlyPiece(targetSquare)) {
       return false;
     } else {  // Has Enemy Piece
-      legalMoves.add('${piece}_${square}_$targetSquare');
+      _addLegalMove(type, square, targetSquare);
       return false;
     }
   }
 
-  void _pawnMoves(String file, int rank, Player player) {
+  void _pawnMoves(ChessFile file, int rank, Player player) {
     final square = '$file$rank';
-    if (player == Player.white) {
-      var targetSquare = '$file${rank + 1}';
-      if (board[targetSquare] == null) {
-        _addLegalMove(PieceType.pawn, square, targetSquare);
-        if (rank == 2) {
-          targetSquare = '$file${rank + 2}';
-          if (board[targetSquare] == null) {
-            _addLegalMove(PieceType.pawn, square, targetSquare);
-          }
+    var targetSquare = '$file${rank + turnPlayer.number}';
+    if (board[targetSquare] == null) {
+      _addLegalMove(PieceType.pawn, square, targetSquare);
+      if (rank*turnPlayer.number == 2 || rank*turnPlayer.number == -7) {
+        targetSquare = '$file${rank + 2*turnPlayer.number}';
+        if (board[targetSquare] == null) {
+          _addLegalMove(PieceType.pawn, square, targetSquare);
         }
       }
-      targetSquare = '${file.shiftFile(-1)}${rank + 1}';
-      if (board[targetSquare]?.player == Player.black) {
-        _addLegalMove(PieceType.pawn, square, targetSquare);
-      }
-      targetSquare = '${file.shiftFile(1)}${rank + 1}';
-      if (board[targetSquare]?.player == Player.black) {
-        _addLegalMove(PieceType.pawn, square, targetSquare);
-      }
-    } else {
-      var targetSquare = '$file${rank - 1}';
-      if (board[targetSquare] == null) {
-        _addLegalMove(PieceType.pawn, square, targetSquare);
-        if (rank == 7) {
-          targetSquare = '$file${rank - 2}';
-          if (board[targetSquare] == null) {
-            _addLegalMove(PieceType.pawn, square, targetSquare);
-          }
-        }
-      }
-      targetSquare = '${file.shiftFile(-1)}${rank - 1}';
-      if (board[targetSquare]?.player == Player.white) {
-        _addLegalMove(PieceType.pawn, square, targetSquare);
-      }
-      targetSquare = '${file.shiftFile(1)}${rank - 1}';
-      if (board[targetSquare]?.player == Player.white) {
-        _addLegalMove(PieceType.pawn, square, targetSquare);
-      }
+    }
+    targetSquare = '${file - 1}${rank + turnPlayer.number}';
+    if (board[targetSquare]?.player == turnPlayer*(-1)) {
+      _addLegalMove(PieceType.pawn, square, targetSquare);
+    }
+    targetSquare = '${file + 1}${rank + turnPlayer.number}';
+    if (board[targetSquare]?.player == turnPlayer*(-1)) {
+      _addLegalMove(PieceType.pawn, square, targetSquare);
     }
   }
 
-  void _knightMoves(String file, int rank) {
+  void _knightMoves(ChessFile file, int rank) {
     final square = '$file$rank';
     var shifts = [
       (-1, -2),
@@ -129,7 +115,7 @@ class GameState {
 
     var targetSquare = '';
     for (var (a, b) in shifts) {
-      targetSquare = '${file.shiftFile(a)}${rank + b}';
+      targetSquare = '${file + a}${rank + b}';
       if (Board.isValidSquare(targetSquare) &&
           !hasFriendlyPiece(targetSquare)) {
         _addLegalMove(PieceType.knight, square, targetSquare);
@@ -137,40 +123,40 @@ class GameState {
     }
   }
 
-  void _rookMoves(String file, int rank) {
+  void _rookMoves(ChessFile file, int rank) {
     // Up
     final square = '$file$rank';
     var targetSquare = '';
     for (int checkRank = rank + 1; checkRank <= 8; checkRank++) {
       targetSquare = '$file$checkRank';
-      if(!_isLegalMove('R', targetSquare, square)) {
+      if(!_addDirectionalMove(PieceType.rook, targetSquare, square)) {
         break;
       }
     }
     //Down
     for (int checkRank = rank - 1; checkRank >= 1; checkRank--) {
       targetSquare = '$file$checkRank';
-      if(!_isLegalMove('R', targetSquare, square)) {
+      if(!_addDirectionalMove(PieceType.rook, targetSquare, square)) {
         break;
       }
     }
     //Right
     for (int filePos = _files.indexOf(file) + 1; filePos < _files.length; filePos++) {
       targetSquare = '${_files[filePos]}$rank';
-      if(!_isLegalMove('R', targetSquare, square)) {
+      if(!_addDirectionalMove(PieceType.rook, targetSquare, square)) {
         break;
       }
     } 
     //Left
     for (int filePos = _files.indexOf(file) - 1; filePos >= 0; filePos--) {
       targetSquare = '${_files[filePos]}$rank';
-      if(!_isLegalMove('R', targetSquare, square)) {
+      if(!_addDirectionalMove(PieceType.rook, targetSquare, square)) {
         break;
       }
     } 
   }
 
-  void _bishopMoves(String file, int rank) {
+  void _bishopMoves(ChessFile file, int rank) {
     final square = '$file$rank';
     var targetSquare = '';
 
@@ -182,7 +168,7 @@ class GameState {
         break;
       }
       targetSquare = '${_files[filePos]}$checkRank';
-      if(!_isLegalMove('B', targetSquare, square)) {
+      if(!_addDirectionalMove(PieceType.bishop, targetSquare, square)) {
         break;
       }
     }
@@ -194,7 +180,7 @@ class GameState {
         break;
       }
       targetSquare = '${_files[filePos]}$checkRank';
-      if(!_isLegalMove('B', targetSquare, square)) {
+      if(!_addDirectionalMove(PieceType.bishop, targetSquare, square)) {
         break;
       }
     }
@@ -206,7 +192,7 @@ class GameState {
         break;
       }
       targetSquare = '${_files[filePos]}$checkRank';
-      if(!_isLegalMove('B', targetSquare, square)) {
+      if(!_addDirectionalMove(PieceType.bishop, targetSquare, square)) {
         break;
       }
     }
@@ -218,13 +204,13 @@ class GameState {
         break;
       }
       targetSquare = '${_files[filePos]}$checkRank';
-      if(!_isLegalMove('B', targetSquare, square)) {
+      if(!_addDirectionalMove(PieceType.bishop, targetSquare, square)) {
         break;
       }
     }
   }
 
-  void _queenMoves(String file, int rank) {
+  void _queenMoves(ChessFile file, int rank) {
     final square = '$file$rank';
     var targetSquare = '';
     //Right Top-Right
@@ -234,7 +220,7 @@ class GameState {
       //horizontal right
       if(!stopHorizontal) {
         targetSquare = '${_files[filePos]}$rank';
-        if(!_isLegalMove('Q', targetSquare, square)) {
+        if(!_addDirectionalMove(PieceType.queen, targetSquare, square)) {
           stopHorizontal = true;
         }
       }
@@ -245,7 +231,7 @@ class GameState {
       }
       if(!stopDiagonal) {
         targetSquare = '${_files[filePos]}$checkRank';
-        if(!_isLegalMove('Q', targetSquare, square)) {
+        if(!_addDirectionalMove(PieceType.queen, targetSquare, square)) {
           stopDiagonal = true; 
         }
       }
@@ -260,17 +246,17 @@ class GameState {
       //vertical up
       if(!stopVertical) {
         targetSquare = '$file$checkRank';
-        if(!_isLegalMove('Q', targetSquare, square)) {
+        if(!_addDirectionalMove(PieceType.queen, targetSquare, square)) {
           stopVertical = true;
         }
       }
       //diagonal top left
-      targetSquare = '${file.shiftFile(rank-checkRank)}$checkRank';
+      targetSquare = '${file + (rank-checkRank)}$checkRank';
       if (!Board.isValidSquare(targetSquare)) {
         continue;
       }
       if(!stopDiagonal) {
-        if(!_isLegalMove('Q', targetSquare, square)) {
+        if(!_addDirectionalMove(PieceType.queen, targetSquare, square)) {
           stopDiagonal = true; 
         }
       }
@@ -285,7 +271,7 @@ class GameState {
       //horizontal left
       if(!stopHorizontal) {
         targetSquare = '${_files[filePos]}$rank';
-        if(!_isLegalMove('Q', targetSquare, square)) {
+        if(!_addDirectionalMove(PieceType.queen, targetSquare, square)) {
           stopHorizontal = true;
         }
       }
@@ -296,7 +282,7 @@ class GameState {
       }
       if(!stopDiagonal) {
         targetSquare = '${_files[filePos]}$checkRank';
-        if(!_isLegalMove('Q', targetSquare, square)) {
+        if(!_addDirectionalMove(PieceType.queen, targetSquare, square)) {
           stopDiagonal = true; 
         }
       }
@@ -311,17 +297,17 @@ class GameState {
       //vertical down
       if(!stopVertical) {
         targetSquare = '$file$checkRank';
-        if(!_isLegalMove('Q', targetSquare, square)) {
+        if(!_addDirectionalMove(PieceType.queen, targetSquare, square)) {
           stopVertical = true;
         }
       }
       //diagonal bottom right
-      targetSquare = '${file.shiftFile(rank-checkRank)}$checkRank';
+      targetSquare = '${file + (rank-checkRank)}$checkRank';
       if (!Board.isValidSquare(targetSquare)) {
         continue;
       }
       if(!stopDiagonal) {  
-        if(!_isLegalMove('Q', targetSquare, square) || !Board.isValidSquare(targetSquare)) {
+        if(!_addDirectionalMove(PieceType.queen, targetSquare, square) || !Board.isValidSquare(targetSquare)) {
           stopDiagonal = true; 
         }
       }

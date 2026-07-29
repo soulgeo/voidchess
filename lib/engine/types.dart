@@ -1,4 +1,19 @@
-enum Player { white, black }
+enum Player {
+  white(1),
+  black(-1);
+
+  final int number;
+  const Player(this.number);
+
+  Player operator *(int multiplier) {
+    final resultValue = number * multiplier;
+    
+    return Player.values.firstWhere(
+      (e) => e.number == resultValue,
+      orElse: () => throw ArgumentError('No enum matches that value.'),
+    );
+  }
+}
 
 enum PieceType { pawn, knight, bishop, rook, queen, king }
 

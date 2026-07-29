@@ -1,5 +1,5 @@
 import 'package:voidchess/engine/gamestate.dart';
-import 'package:voidchess/engine/pieces.dart';
+import 'package:voidchess/engine/types.dart';
 import 'package:test/test.dart';
 
 // ignore: constant_identifier_names

@@ -1,4 +1,4 @@
-import 'pieces.dart';
+import 'types.dart';
 
 // ignore: constant_identifier_names
 const __ = null;
