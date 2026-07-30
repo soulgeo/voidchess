@@ -285,6 +285,76 @@ void main() {
     });
   });
 
+  group('Castling Legal Moves (Chess Rules)', () {
+    test('White short and long castling are legal when requirements are met', () {
+      final gamestate = GameState.atPosition(Player.white, [
+        [bR, __, __, __, bK, __, __, bR], // R0 = Rank 8
+        [bp, bp, bp, bp, bp, bp, bp, bp], // R1 = Rank 7
+        [__, __, __, __, __, __, __, __], // R2 = Rank 6
+        [__, __, __, __, __, __, __, __], // R3 = Rank 5
+        [__, __, __, __, __, __, __, __], // R4 = Rank 4
+        [__, __, __, __, __, __, __, __], // R5 = Rank 3
+        [wp, wp, wp, wp, wp, wp, wp, wp], // R6 = Rank 2
+        [wR, __, __, __, wK, __, __, wR], // R7 = Rank 1: wR (a1), wK (e1), wR (h1)
+      ]);
+
+      expect(gamestate.legalMoves, contains(const Move(PieceType.king, 'e1', 'g1'))); // Short castle
+      expect(gamestate.legalMoves, contains(const Move(PieceType.king, 'e1', 'c1'))); // Long castle
+    });
+
+    test('Castling disallowed if King has moved', () {
+      final gamestate = GameState.atPosition(
+        Player.white,
+        [
+          [bR, __, __, __, bK, __, __, bR],
+          [bp, bp, bp, bp, bp, bp, bp, bp],
+          [__, __, __, __, __, __, __, __],
+          [__, __, __, __, __, __, __, __],
+          [__, __, __, __, __, __, __, __],
+          [__, __, __, __, __, __, __, __],
+          [wp, wp, wp, wp, wp, wp, wp, wp],
+          [wR, __, __, __, wK, __, __, wR],
+        ],
+        whiteKingMoved: true,
+      );
+
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.king, 'e1', 'g1'))));
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.king, 'e1', 'c1'))));
+    });
+
+    test('Short castling disallowed if transit square f1 is attacked by enemy piece', () {
+      final gamestate = GameState.atPosition(Player.white, [
+        [bR, __, __, __, bK, __, __, bR],
+        [bp, bp, bp, bp, __, bp, bp, bp], // f7 empty
+        [__, __, __, __, __, __, __, __],
+        [__, __, __, __, __, __, __, __],
+        [__, __, bB, __, __, __, __, __], // bB at c4 attacking f1
+        [__, __, __, __, __, __, __, __],
+        [wp, wp, wp, wp, __, wp, wp, wp], // e2 empty so c4 bishop reaches f1
+        [wR, __, __, __, wK, __, __, wR],
+      ]);
+
+      // Transit square f1 is attacked by bB on c4
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.king, 'e1', 'g1'))));
+    });
+
+    test('Castling disallowed if King is currently in check', () {
+      final gamestate = GameState.atPosition(Player.white, [
+        [bR, __, __, __, bK, __, __, bR],
+        [bp, bp, bp, bp, __, bp, bp, bp],
+        [__, __, __, __, __, __, __, __],
+        [__, __, __, __, __, __, __, __],
+        [__, __, __, __, bR, __, __, __], // bR at e4 checking wK on e1
+        [__, __, __, __, __, __, __, __],
+        [wp, wp, wp, wp, __, wp, wp, wp], // e2 empty so e4 rook checks e1 king
+        [wR, __, __, __, wK, __, __, wR],
+      ]);
+
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.king, 'e1', 'g1'))));
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.king, 'e1', 'c1'))));
+    });
+  });
+
   group('Knight Legal Moves (Chess Rules)', () {
     test('Knight in center of empty board (d5) has 8 legal moves', () {
       final gamestate = GameState.atPosition(Player.white, [

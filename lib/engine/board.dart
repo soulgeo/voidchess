@@ -1,3 +1,5 @@
+import 'package:voidchess/engine/util.dart';
+
 import 'types.dart';
 
 // ignore: constant_identifier_names
@@ -19,6 +21,8 @@ class Board {
   Board.position(List<List<Piece?>> grid) {
     _grid = grid;
   }
+
+  List<List<Piece?>> get grid => _grid;
 
   Board clone() {
     return Board.position(_grid.map((row) => List<Piece?>.from(row)).toList());
@@ -63,6 +67,21 @@ class Board {
         this[move.endSquare] == null) {
       final capturedSquare = '${move.endSquare[0]}${move.startSquare[1]}';
       this[capturedSquare] = null;
+    }
+    final startFile = ChessFile(move.startSquare[0]);
+    final endFile = ChessFile(move.endSquare[0]);
+    final rank = move.startSquare[1];
+    if (piece?.type == PieceType.king && endFile.value == startFile + 2) {
+      // Perform short castle
+      final rook = this['h$rank'];
+      this['h$rank'] = null;
+      this['f$rank'] = rook;
+    }
+    if (piece?.type == PieceType.king && endFile.value == startFile - 2) {
+      // Perform long castle
+      final rook = this['a$rank'];
+      this['a$rank'] = null;
+      this['d$rank'] = rook;
     }
     this[move.startSquare] = null;
     this[move.endSquare] = piece;

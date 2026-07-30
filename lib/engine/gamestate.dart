@@ -21,15 +21,62 @@ class GameState {
 
   Move? lastMove;
 
+  bool whiteKingMoved = false;
+  bool whiteKingsideRookMoved = false;
+  bool whiteQueensideRookMoved = false;
+  bool blackKingMoved = false;
+  bool blackKingsideRookMoved = false;
+  bool blackQueensideRookMoved = false;
+
+  bool _isCalculatingCheck = false;
+
   GameState() {
     _calcAllLegalMoves();
   }
-  GameState.atPosition(this.turnPlayer, List<List<Piece?>> grid, {this.lastMove}) {
+  GameState.raw(this.turnPlayer, this.board, {bool isCalculatingCheck = false})
+      : _isCalculatingCheck = isCalculatingCheck;
+
+  bool isKingInCheck([Player? player]) {
+    if (_isCalculatingCheck) return false;
+    final targetPlayer = player ?? turnPlayer;
+    final opponent = targetPlayer * (-1);
+    final opponentState = GameState.raw(opponent, board, isCalculatingCheck: true);
+    opponentState._calcAllCandidateMoves();
+    for (var move in opponentState.candidateMoves) {
+      final piece = board[move.endSquare];
+      if (piece?.type == PieceType.king && piece?.player == targetPlayer) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  GameState.atPosition(
+    this.turnPlayer,
+    List<List<Piece?>> grid, {
+    this.lastMove,
+    this.whiteKingMoved = false,
+    this.whiteKingsideRookMoved = false,
+    this.whiteQueensideRookMoved = false,
+    this.blackKingMoved = false,
+    this.blackKingsideRookMoved = false,
+    this.blackQueensideRookMoved = false,
+  }) {
     board = Board.position(grid);
     _calcAllLegalMoves();
   }
   GameState.next(GameState current, Move move) {
     board = current.board.clone();
+    turnPlayer = current.turnPlayer;
+    whiteKingMoved = current.whiteKingMoved;
+    whiteKingsideRookMoved = current.whiteKingsideRookMoved;
+    whiteQueensideRookMoved = current.whiteQueensideRookMoved;
+    blackKingMoved = current.blackKingMoved;
+    blackKingsideRookMoved = current.blackKingsideRookMoved;
+    blackQueensideRookMoved = current.blackQueensideRookMoved;
+
+    _updateCastlingFlags(move);
+
     board.applyMove(move);
     turnPlayer = current.turnPlayer * (-1);
     lastMove = move;
@@ -37,10 +84,32 @@ class GameState {
 
   bool hasFriendlyPiece(String square) => board[square]?.player == turnPlayer;
 
+  void _updateCastlingFlags(Move move) {
+    final piece = board[move.startSquare];
+    if (piece?.type == PieceType.king) {
+      if (turnPlayer == Player.white) {
+        whiteKingMoved = true;
+      } else {
+        blackKingMoved = true;
+      }
+    }
+    if (piece?.type == PieceType.rook) {
+      if (move.startSquare == 'h1') whiteKingsideRookMoved = true;
+      if (move.startSquare == 'a1') whiteQueensideRookMoved = true;
+      if (move.startSquare == 'h8') blackKingsideRookMoved = true;
+      if (move.startSquare == 'a8') blackQueensideRookMoved = true;
+    }
+    if (move.endSquare == 'h1') whiteKingsideRookMoved = true;
+    if (move.endSquare == 'a1') whiteQueensideRookMoved = true;
+    if (move.endSquare == 'h8') blackKingsideRookMoved = true;
+    if (move.endSquare == 'a8') blackQueensideRookMoved = true;
+  }
+
   void applyMove(Move move) {
     if (!legalMoves.contains(move)) {
       throw StateError("Cannot apply illegal move to gamestate.");
     }
+    _updateCastlingFlags(move);
     board.applyMove(move);
     lastMove = move;
     turnPlayer *= -1;
@@ -362,6 +431,18 @@ class GameState {
     }
   }
 
+  bool _isCandidateMoveLegal(Move move) {
+    var next = GameState.next(this, move);
+    next._calcAllCandidateMoves();
+    for (var nextMove in next.candidateMoves) {
+      final piece = next.board[nextMove.endSquare];
+      if (piece?.type == PieceType.king && piece?.player == turnPlayer) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   void _calcKingMoves(ChessFile file, int rank) {
     final square = '$file$rank';
     final shifts = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)];
@@ -370,6 +451,46 @@ class GameState {
       targetSquare = '${file + a}${rank + b}';
       if (Board.isValidSquare(targetSquare) && !hasFriendlyPiece(targetSquare)) {
         _addCandidateMove(PieceType.king, square, targetSquare);
+      }
+    }
+
+    _calcCastlingMoves(file, rank);
+  }
+
+  void _calcCastlingMoves(ChessFile file, int rank) {
+    final expectedRank = turnPlayer == Player.white ? 1 : 8;
+    if (file.value != 'e' || rank != expectedRank) return;
+
+    final kingMoved = turnPlayer == Player.white ? whiteKingMoved : blackKingMoved;
+    if (kingMoved) return;
+
+    if (isKingInCheck()) return;
+
+    final ksRookMoved = turnPlayer == Player.white ? whiteKingsideRookMoved : blackKingsideRookMoved;
+    final qsRookMoved = turnPlayer == Player.white ? whiteQueensideRookMoved : blackQueensideRookMoved;
+
+    // Short Castling
+    if (!ksRookMoved &&
+        board['h$rank']?.type == PieceType.rook &&
+        board['h$rank']?.player == turnPlayer &&
+        board['f$rank'] == null &&
+        board['g$rank'] == null) {
+      final kfMove = Move(PieceType.king, 'e$rank', 'f$rank');
+      if (candidateMoves.contains(kfMove) && _isCandidateMoveLegal(kfMove)) {
+        _addCandidateMove(PieceType.king, 'e$rank', 'g$rank');
+      }
+    }
+
+    // Long Castling
+    if (!qsRookMoved &&
+        board['a$rank']?.type == PieceType.rook &&
+        board['a$rank']?.player == turnPlayer &&
+        board['b$rank'] == null &&
+        board['c$rank'] == null &&
+        board['d$rank'] == null) {
+      final kdMove = Move(PieceType.king, 'e$rank', 'd$rank');
+      if (candidateMoves.contains(kdMove) && _isCandidateMoveLegal(kdMove)) {
+        _addCandidateMove(PieceType.king, 'e$rank', 'c$rank');
       }
     }
   }
