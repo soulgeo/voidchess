@@ -1,12 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:voidchess/route_generator.dart';
 
-void main() {
-  runApp(const MainApp());
+void main() => runApp(MyApp());
+
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Void Chess',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      initialRoute: '/',
+      onGenerateRoute: RouteGenerator.generateRoute,
+    );
+  }
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class MainMenu extends StatelessWidget {
+  const MainMenu({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +35,7 @@ class MainApp extends StatelessWidget {
           child: Column(
             children: [
               Padding(
-                padding: EdgeInsets.only(top: 100),
+                padding: EdgeInsets.only(top: 150),
                 child: Center(
                   child: Text(
                     "Void Chess",
@@ -37,7 +51,6 @@ class MainApp extends StatelessWidget {
                 padding: EdgeInsets.only(top: 150),
                 child: TextButton(
                   style: ButtonStyle(
-                    textStyle: WidgetStateProperty.all<TextStyle>(const TextStyle(fontSize: 15)), 
                     fixedSize: WidgetStateProperty.all<Size>(const Size(200, 50)),
                     foregroundColor: WidgetStateProperty.all<Color>(const Color.fromARGB(255, 179, 212, 255)),
                     backgroundColor: WidgetStateProperty.all<Color>(const Color.fromARGB(255, 18, 65, 136)),
@@ -49,16 +62,27 @@ class MainApp extends StatelessWidget {
                         if (states.contains(WidgetState.focused) || states.contains(WidgetState.pressed)) {
                           return Colors.blue.withValues(alpha: 0.12);
                         }
-                        return null; // Defer to the widget's default.
+                        return null; 
                       },
                     ),
                   ),
-                  onPressed: () { },
-                  child: Text('Play')
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(
+                      '/second',
+                      arguments: 'Hello there from the first page!',
+                    );
+                   },
+                  child: Text(
+                    'Play',
+                    style: TextStyle(
+                      fontSize: 16,  
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: 50),
+                padding: EdgeInsets.only(top: 80),
                 child: TextButton(
                   style: ButtonStyle(
                     fixedSize: WidgetStateProperty.all<Size>(const Size(200, 50)),
@@ -72,16 +96,56 @@ class MainApp extends StatelessWidget {
                         if (states.contains(WidgetState.focused) || states.contains(WidgetState.pressed)) {
                           return Colors.blue.withValues(alpha: 0.12);
                         }
-                        return null; // Defer to the widget's default.
+                        return null; 
                       },
                     ),
                   ),
                   onPressed: () { },
-                  child: Text('Settings')
+                  child: Text(
+                    'Settings',
+                    style: TextStyle(
+                      fontSize: 16,  
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class SecondPage extends StatelessWidget {
+
+  const SecondPage({
+    super.key,
+    required this.data,
+    });
+
+  final String data;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Void Chess'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text(
+              'Second Page',
+              style: TextStyle(fontSize: 50),
+            ),
+            Text(
+              data,
+              style: TextStyle(fontSize: 20),
+            ),
+          ],
         ),
       ),
     );

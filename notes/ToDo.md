@@ -1,7 +1,7 @@
 Main Menu 
 - [ ] placeholder logo above title
 - [ ] functional play button 
-- [ ] placeholder settings button 
+- [x] placeholder settings button 
 
 Game Screen
 - [ ] routing from play button
