@@ -192,6 +192,99 @@ void main() {
     });
   });
 
+  group('En Passant Legal Moves (Chess Rules)', () {
+    test('White pawn can capture enemy pawn en passant after two-square pawn advance', () {
+      final gamestate = GameState.atPosition(
+        Player.white,
+        [
+          [__, __, __, __, __, __, __, bK], // R0 = Rank 8 (bK at h8)
+          [__, __, __, __, __, __, __, __], // R1 = Rank 7
+          [__, __, __, __, __, __, __, __], // R2 = Rank 6
+          [__, __, __, bp, wp, __, __, __], // R3 = Rank 5: d5 (bp), e5 (wp)
+          [__, __, __, __, __, __, __, __], // R4 = Rank 4
+          [__, __, __, __, __, __, __, __], // R5 = Rank 3
+          [__, __, __, __, __, __, __, __], // R6 = Rank 2
+          [wK, __, __, __, __, __, __, __], // R7 = Rank 1 (wK at a1)
+        ],
+        lastMove: const Move(PieceType.pawn, 'd7', 'd5'),
+      );
+
+      final enPassantMove = const Move(PieceType.pawn, 'e5', 'd6');
+      expect(gamestate.legalMoves, contains(enPassantMove));
+
+      gamestate.applyMove(enPassantMove);
+
+      expect(gamestate.board['e5'], isNull);
+      expect(gamestate.board['d5'], isNull); // Captured pawn removed
+      expect(gamestate.board['d6'], equals(wp));
+    });
+
+    test('Black pawn can capture enemy pawn en passant after two-square pawn advance', () {
+      final gamestate = GameState.atPosition(
+        Player.black,
+        [
+          [__, __, __, __, __, __, __, bK], // R0 = Rank 8 (bK at h8)
+          [__, __, __, __, __, __, __, __], // R1 = Rank 7
+          [__, __, __, __, __, __, __, __], // R2 = Rank 6
+          [__, __, __, __, __, __, __, __], // R3 = Rank 5
+          [__, __, __, bp, wp, __, __, __], // R4 = Rank 4: d4 (bp), e4 (wp)
+          [__, __, __, __, __, __, __, __], // R5 = Rank 3
+          [__, __, __, __, __, __, __, __], // R6 = Rank 2
+          [wK, __, __, __, __, __, __, __], // R7 = Rank 1 (wK at a1)
+        ],
+        lastMove: const Move(PieceType.pawn, 'e2', 'e4'),
+      );
+
+      final enPassantMove = const Move(PieceType.pawn, 'd4', 'e3');
+      expect(gamestate.legalMoves, contains(enPassantMove));
+
+      gamestate.applyMove(enPassantMove);
+
+      expect(gamestate.board['d4'], isNull);
+      expect(gamestate.board['e4'], isNull); // Captured pawn removed
+      expect(gamestate.board['e3'], equals(bp));
+    });
+
+    test('En passant capture is not allowed if pawn advanced only one square', () {
+      final gamestate = GameState.atPosition(
+        Player.white,
+        [
+          [__, __, __, __, __, __, __, bK], // R0 = Rank 8
+          [__, __, __, __, __, __, __, __], // R1 = Rank 7
+          [__, __, __, __, __, __, __, __], // R2 = Rank 6
+          [__, __, __, bp, wp, __, __, __], // R3 = Rank 5: d5 (bp), e5 (wp)
+          [__, __, __, __, __, __, __, __], // R4 = Rank 4
+          [__, __, __, __, __, __, __, __], // R5 = Rank 3
+          [__, __, __, __, __, __, __, __], // R6 = Rank 2
+          [wK, __, __, __, __, __, __, __], // R7 = Rank 1
+        ],
+        lastMove: const Move(PieceType.pawn, 'd6', 'd5'), // single step from d6
+      );
+
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.pawn, 'e5', 'd6'))));
+    });
+
+    test('En passant capture is illegal if it exposes King to check', () {
+      final gamestate = GameState.atPosition(
+        Player.white,
+        [
+          [__, __, __, __, __, __, __, bK], // R0 = Rank 8
+          [__, __, __, __, __, __, __, __], // R1 = Rank 7
+          [__, __, __, __, __, __, __, __], // R2 = Rank 6
+          [wK, __, __, bp, wp, __, __, bR], // R3 = Rank 5: a5 (wK), d5 (bp), e5 (wp), h5 (bR)
+          [__, __, __, __, __, __, __, __], // R4 = Rank 4
+          [__, __, __, __, __, __, __, __], // R5 = Rank 3
+          [__, __, __, __, __, __, __, __], // R6 = Rank 2
+          [__, __, __, __, __, __, __, __], // R7 = Rank 1
+        ],
+        lastMove: const Move(PieceType.pawn, 'd7', 'd5'),
+      );
+
+      // Capturing en passant removes both d5 (bp) and e5 (wp) from rank 5, leaving wK at a5 exposed to bR at h5.
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.pawn, 'e5', 'd6'))));
+    });
+  });
+
   group('Knight Legal Moves (Chess Rules)', () {
     test('Knight in center of empty board (d5) has 8 legal moves', () {
       final gamestate = GameState.atPosition(Player.white, [

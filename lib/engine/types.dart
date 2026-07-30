@@ -2,14 +2,14 @@ enum Player {
   white(1),
   black(-1);
 
-  final int number;
-  const Player(this.number);
+  final int unit;
+  const Player(this.unit);
 
   Player operator *(int multiplier) {
-    final resultValue = number * multiplier;
+    final resultValue = unit * multiplier;
     
     return Player.values.firstWhere(
-      (e) => e.number == resultValue,
+      (e) => e.unit == resultValue,
       orElse: () => throw ArgumentError('No enum matches that value.'),
     );
   }

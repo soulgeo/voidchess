@@ -58,6 +58,12 @@ class Board {
 
   void applyMove(Move move) {
     final piece = this[move.startSquare];
+    if (piece?.type == PieceType.pawn &&
+        move.startSquare[0] != move.endSquare[0] &&
+        this[move.endSquare] == null) {
+      final capturedSquare = '${move.endSquare[0]}${move.startSquare[1]}';
+      this[capturedSquare] = null;
+    }
     this[move.startSquare] = null;
     this[move.endSquare] = piece;
   }
