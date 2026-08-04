@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:voidchess/route_generator.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'print_piece.dart';
 
 void main() => runApp(MyApp());
 
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -20,8 +24,8 @@ class MyApp extends StatelessWidget {
 }
 
 class MainMenu extends StatelessWidget {
-  const MainMenu({super.key});
-
+  const MainMenu({super.key,});
+  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -35,7 +39,11 @@ class MainMenu extends StatelessWidget {
           child: Column(
             children: [
               Padding(
-                padding: EdgeInsets.only(top: 150),
+                padding: EdgeInsets.only(top:150),
+                child: SvgPicture.asset('../assets/logos/flutter_logo.svg', width:100, height: 100, semanticsLabel: 'Dart Logo'),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 50),
                 child: Center(
                   child: Text(
                     "Void Chess",
@@ -48,7 +56,7 @@ class MainMenu extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: 150),
+                padding: EdgeInsets.only(top: 75),
                 child: TextButton(
                   style: ButtonStyle(
                     fixedSize: WidgetStateProperty.all<Size>(const Size(200, 50)),
@@ -82,7 +90,7 @@ class MainMenu extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: 80),
+                padding: EdgeInsets.only(top: 50),
                 child: TextButton(
                   style: ButtonStyle(
                     fixedSize: WidgetStateProperty.all<Size>(const Size(200, 50)),
@@ -108,6 +116,21 @@ class MainMenu extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 50),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    PrintPiece(piece: 'bishop', color: 'black', width: 60, height: 60),
+                    SizedBox(width: 20),
+                    PrintPiece(piece: 'king', color: 'white', width: 60, height: 60),
+                    SizedBox(width: 20),
+                    PrintPiece(piece: 'queen', color: 'black', width: 60, height: 60),
+                    SizedBox(width: 20),
+                    PrintPiece(piece: 'rook', color: 'white', width: 60, height: 60),
+                  ]
                 ),
               ),
             ],
