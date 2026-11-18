@@ -16,17 +16,11 @@ class GameState {
 
   var board = Board();
   var turnPlayer = Player.white;
+  List<Move> whiteMoves = [];
+  List<Move> blackMoves = [];
+
   List<Move> candidateMoves = [];
   List<Move> legalMoves = [];
-
-  Move? lastMove;
-
-  bool whiteKingMoved = false;
-  bool whiteKingsideRookMoved = false;
-  bool whiteQueensideRookMoved = false;
-  bool blackKingMoved = false;
-  bool blackKingsideRookMoved = false;
-  bool blackQueensideRookMoved = false;
 
   bool _isCalculatingCheck = false;
 
@@ -53,65 +47,35 @@ class GameState {
 
   GameState.atPosition(
     this.turnPlayer,
-    List<List<Piece?>> grid, {
-    this.lastMove,
-    this.whiteKingMoved = false,
-    this.whiteKingsideRookMoved = false,
-    this.whiteQueensideRookMoved = false,
-    this.blackKingMoved = false,
-    this.blackKingsideRookMoved = false,
-    this.blackQueensideRookMoved = false,
-  }) {
+    List<List<Piece?>> grid
+  ) {
     board = Board.position(grid);
     _calcAllLegalMoves();
   }
+
   GameState.next(GameState current, Move move) {
     board = current.board.clone();
     turnPlayer = current.turnPlayer;
-    whiteKingMoved = current.whiteKingMoved;
-    whiteKingsideRookMoved = current.whiteKingsideRookMoved;
-    whiteQueensideRookMoved = current.whiteQueensideRookMoved;
-    blackKingMoved = current.blackKingMoved;
-    blackKingsideRookMoved = current.blackKingsideRookMoved;
-    blackQueensideRookMoved = current.blackQueensideRookMoved;
-
-    _updateCastlingFlags(move);
+    whiteMoves = current.whiteMoves;
+    blackMoves = current.blackMoves;
 
     board.applyMove(move);
     turnPlayer = current.turnPlayer * (-1);
-    lastMove = move;
   }
 
   bool hasFriendlyPiece(String square) => board[square]?.player == turnPlayer;
 
-  void _updateCastlingFlags(Move move) {
-    final piece = board[move.startSquare];
-    if (piece?.type == PieceType.king) {
-      if (turnPlayer == Player.white) {
-        whiteKingMoved = true;
-      } else {
-        blackKingMoved = true;
-      }
-    }
-    if (piece?.type == PieceType.rook) {
-      if (move.startSquare == 'h1') whiteKingsideRookMoved = true;
-      if (move.startSquare == 'a1') whiteQueensideRookMoved = true;
-      if (move.startSquare == 'h8') blackKingsideRookMoved = true;
-      if (move.startSquare == 'a8') blackQueensideRookMoved = true;
-    }
-    if (move.endSquare == 'h1') whiteKingsideRookMoved = true;
-    if (move.endSquare == 'a1') whiteQueensideRookMoved = true;
-    if (move.endSquare == 'h8') blackKingsideRookMoved = true;
-    if (move.endSquare == 'a8') blackQueensideRookMoved = true;
-  }
 
   void applyMove(Move move) {
     if (!legalMoves.contains(move)) {
       throw StateError("Cannot apply illegal move to gamestate.");
     }
-    _updateCastlingFlags(move);
     board.applyMove(move);
-    lastMove = move;
+    if (turnPlayer == Player.white) {
+      whiteMoves.add(move);
+    } else {
+      blackMoves.add(move);
+    }
     turnPlayer *= -1;
     _calcAllLegalMoves();
   }
@@ -211,11 +175,16 @@ class GameState {
       targetSquare = '${file + n}${rank + turnPlayer.unit}';
       bool canCaptureDiagonally = board[targetSquare]?.player == turnPlayer * (-1);
       bool canCaptureEnPassant = false;
-      if (lastMove != null &&
-          lastMove!.type == PieceType.pawn &&
-          lastMove!.endSquare == '${file + n}$rank' &&
-          lastMove!.startSquare == '${file + n}${rank + 2 * turnPlayer.unit}') {
-        canCaptureEnPassant = true;
+      try {
+        final lastMove = turnPlayer == Player.white ? whiteMoves.last : blackMoves.last ;
+        if (
+            lastMove.type == PieceType.pawn &&
+            lastMove.endSquare == '${file + n}$rank' &&
+            lastMove.startSquare == '${file + n}${rank + 2 * turnPlayer.unit}') {
+          canCaptureEnPassant = true;
+        }
+      } on StateError {
+        canCaptureEnPassant = false;
       }
       if (canCaptureDiagonally || canCaptureEnPassant) {
         _addCandidateMove(PieceType.pawn, square, targetSquare);
@@ -461,16 +430,30 @@ class GameState {
     final expectedRank = turnPlayer == Player.white ? 1 : 8;
     if (file.value != 'e' || rank != expectedRank) return;
 
-    final kingMoved = turnPlayer == Player.white ? whiteKingMoved : blackKingMoved;
+    final whiteKingMoved2 = 
+        whiteMoves.where((m) => m.type == PieceType.king).isNotEmpty;
+    final blackKingMoved2 = 
+        blackMoves.where((m) => m.type == PieceType.king).isNotEmpty;
+
+    final kingMoved = turnPlayer == Player.white ? whiteKingMoved2 : blackKingMoved2;
     if (kingMoved) return;
 
     if (isKingInCheck()) return;
 
-    final ksRookMoved = turnPlayer == Player.white ? whiteKingsideRookMoved : blackKingsideRookMoved;
-    final qsRookMoved = turnPlayer == Player.white ? whiteQueensideRookMoved : blackQueensideRookMoved;
+    final wkRookMoved = 
+        whiteMoves.where((m) => m.type == PieceType.rook && m.startSquare == "h1").isNotEmpty;
+    final bkRookMoved = 
+        blackMoves.where((m) => m.type == PieceType.rook && m.startSquare == "h8").isNotEmpty;
+    final wqRookMoved = 
+        whiteMoves.where((m) => m.type == PieceType.rook && m.startSquare == "a1").isNotEmpty;
+    final bqRookMoved = 
+        blackMoves.where((m) => m.type == PieceType.rook && m.startSquare == "a8").isNotEmpty;
+
+    final kRookMoved = turnPlayer == Player.white ? wkRookMoved : bkRookMoved;
+    final qRookMoved = turnPlayer == Player.white ? wqRookMoved : bqRookMoved;
 
     // Short Castling
-    if (!ksRookMoved &&
+    if (!kRookMoved &&
         board['h$rank']?.type == PieceType.rook &&
         board['h$rank']?.player == turnPlayer &&
         board['f$rank'] == null &&
@@ -482,7 +465,7 @@ class GameState {
     }
 
     // Long Castling
-    if (!qsRookMoved &&
+    if (!qRookMoved &&
         board['a$rank']?.type == PieceType.rook &&
         board['a$rank']?.player == turnPlayer &&
         board['b$rank'] == null &&
