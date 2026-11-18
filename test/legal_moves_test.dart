@@ -206,7 +206,7 @@ void main() {
           [__, __, __, __, __, __, __, __], // R6 = Rank 2
           [wK, __, __, __, __, __, __, __], // R7 = Rank 1 (wK at a1)
         ],
-        lastMove: const Move(PieceType.pawn, 'd7', 'd5'),
+        blackMoves: [const Move(PieceType.pawn, 'd7', 'd5')],
       );
 
       final enPassantMove = const Move(PieceType.pawn, 'e5', 'd6');
@@ -217,6 +217,7 @@ void main() {
       expect(gamestate.board['e5'], isNull);
       expect(gamestate.board['d5'], isNull); // Captured pawn removed
       expect(gamestate.board['d6'], equals(wp));
+      expect(gamestate.whiteMoves, contains(enPassantMove));
     });
 
     test('Black pawn can capture enemy pawn en passant after two-square pawn advance', () {
@@ -232,7 +233,7 @@ void main() {
           [__, __, __, __, __, __, __, __], // R6 = Rank 2
           [wK, __, __, __, __, __, __, __], // R7 = Rank 1 (wK at a1)
         ],
-        lastMove: const Move(PieceType.pawn, 'e2', 'e4'),
+        whiteMoves: [const Move(PieceType.pawn, 'e2', 'e4')],
       );
 
       final enPassantMove = const Move(PieceType.pawn, 'd4', 'e3');
@@ -243,6 +244,7 @@ void main() {
       expect(gamestate.board['d4'], isNull);
       expect(gamestate.board['e4'], isNull); // Captured pawn removed
       expect(gamestate.board['e3'], equals(bp));
+      expect(gamestate.blackMoves, contains(enPassantMove));
     });
 
     test('En passant capture is not allowed if pawn advanced only one square', () {
@@ -258,7 +260,7 @@ void main() {
           [__, __, __, __, __, __, __, __], // R6 = Rank 2
           [wK, __, __, __, __, __, __, __], // R7 = Rank 1
         ],
-        lastMove: const Move(PieceType.pawn, 'd6', 'd5'), // single step from d6
+        blackMoves: [const Move(PieceType.pawn, 'd6', 'd5')], // single step from d6
       );
 
       expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.pawn, 'e5', 'd6'))));
@@ -277,7 +279,7 @@ void main() {
           [__, __, __, __, __, __, __, __], // R6 = Rank 2
           [__, __, __, __, __, __, __, __], // R7 = Rank 1
         ],
-        lastMove: const Move(PieceType.pawn, 'd7', 'd5'),
+        blackMoves: [const Move(PieceType.pawn, 'd7', 'd5')],
       );
 
       // Capturing en passant removes both d5 (bp) and e5 (wp) from rank 5, leaving wK at a5 exposed to bR at h5.
@@ -302,7 +304,7 @@ void main() {
       expect(gamestate.legalMoves, contains(const Move(PieceType.king, 'e1', 'c1'))); // Long castle
     });
 
-    test('Castling disallowed if King has moved', () {
+    test('White castling disallowed if King has moved in move memory', () {
       final gamestate = GameState.atPosition(
         Player.white,
         [
@@ -315,11 +317,145 @@ void main() {
           [wp, wp, wp, wp, wp, wp, wp, wp],
           [wR, __, __, __, wK, __, __, wR],
         ],
-        whiteKingMoved: true,
+        whiteMoves: [
+          const Move(PieceType.king, 'e1', 'e2'),
+          const Move(PieceType.king, 'e2', 'e1'),
+        ],
       );
 
       expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.king, 'e1', 'g1'))));
       expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.king, 'e1', 'c1'))));
+    });
+
+    test('White kingside castling disallowed if kingside rook has moved in move memory', () {
+      final gamestate = GameState.atPosition(
+        Player.white,
+        [
+          [bR, __, __, __, bK, __, __, bR],
+          [bp, bp, bp, bp, bp, bp, bp, bp],
+          [__, __, __, __, __, __, __, __],
+          [__, __, __, __, __, __, __, __],
+          [__, __, __, __, __, __, __, __],
+          [__, __, __, __, __, __, __, __],
+          [wp, wp, wp, wp, wp, wp, wp, wp],
+          [wR, __, __, __, wK, __, __, wR],
+        ],
+        whiteMoves: [
+          const Move(PieceType.rook, 'h1', 'h2'),
+          const Move(PieceType.rook, 'h2', 'h1'),
+        ],
+      );
+
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.king, 'e1', 'g1'))));
+      expect(gamestate.legalMoves, contains(const Move(PieceType.king, 'e1', 'c1')));
+    });
+
+    test('White queenside castling disallowed if queenside rook has moved in move memory', () {
+      final gamestate = GameState.atPosition(
+        Player.white,
+        [
+          [bR, __, __, __, bK, __, __, bR],
+          [bp, bp, bp, bp, bp, bp, bp, bp],
+          [__, __, __, __, __, __, __, __],
+          [__, __, __, __, __, __, __, __],
+          [__, __, __, __, __, __, __, __],
+          [__, __, __, __, __, __, __, __],
+          [wp, wp, wp, wp, wp, wp, wp, wp],
+          [wR, __, __, __, wK, __, __, wR],
+        ],
+        whiteMoves: [
+          const Move(PieceType.rook, 'a1', 'a2'),
+          const Move(PieceType.rook, 'a2', 'a1'),
+        ],
+      );
+
+      expect(gamestate.legalMoves, contains(const Move(PieceType.king, 'e1', 'g1')));
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.king, 'e1', 'c1'))));
+    });
+
+    test('Black short and long castling are legal when requirements are met', () {
+      final gamestate = GameState.atPosition(Player.black, [
+        [bR, __, __, __, bK, __, __, bR], // R0 = Rank 8: bR (a8), bK (e8), bR (h8)
+        [bp, bp, bp, bp, bp, bp, bp, bp], // R1 = Rank 7
+        [__, __, __, __, __, __, __, __], // R2 = Rank 6
+        [__, __, __, __, __, __, __, __], // R3 = Rank 5
+        [__, __, __, __, __, __, __, __], // R4 = Rank 4
+        [__, __, __, __, __, __, __, __], // R5 = Rank 3
+        [wp, wp, wp, wp, wp, wp, wp, wp], // R6 = Rank 2
+        [wR, __, __, __, wK, __, __, wR], // R7 = Rank 1
+      ]);
+
+      expect(gamestate.legalMoves, contains(const Move(PieceType.king, 'e8', 'g8'))); // Short castle
+      expect(gamestate.legalMoves, contains(const Move(PieceType.king, 'e8', 'c8'))); // Long castle
+    });
+
+    test('Black castling disallowed if King has moved in move memory', () {
+      final gamestate = GameState.atPosition(
+        Player.black,
+        [
+          [bR, __, __, __, bK, __, __, bR],
+          [bp, bp, bp, bp, bp, bp, bp, bp],
+          [__, __, __, __, __, __, __, __],
+          [__, __, __, __, __, __, __, __],
+          [__, __, __, __, __, __, __, __],
+          [__, __, __, __, __, __, __, __],
+          [wp, wp, wp, wp, wp, wp, wp, wp],
+          [wR, __, __, __, wK, __, __, wR],
+        ],
+        blackMoves: [
+          const Move(PieceType.king, 'e8', 'e7'),
+          const Move(PieceType.king, 'e7', 'e8'),
+        ],
+      );
+
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.king, 'e8', 'g8'))));
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.king, 'e8', 'c8'))));
+    });
+
+    test('Black kingside castling disallowed if kingside rook has moved in move memory', () {
+      final gamestate = GameState.atPosition(
+        Player.black,
+        [
+          [bR, __, __, __, bK, __, __, bR],
+          [bp, bp, bp, bp, bp, bp, bp, bp],
+          [__, __, __, __, __, __, __, __],
+          [__, __, __, __, __, __, __, __],
+          [__, __, __, __, __, __, __, __],
+          [__, __, __, __, __, __, __, __],
+          [wp, wp, wp, wp, wp, wp, wp, wp],
+          [wR, __, __, __, wK, __, __, wR],
+        ],
+        blackMoves: [
+          const Move(PieceType.rook, 'h8', 'h7'),
+          const Move(PieceType.rook, 'h7', 'h8'),
+        ],
+      );
+
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.king, 'e8', 'g8'))));
+      expect(gamestate.legalMoves, contains(const Move(PieceType.king, 'e8', 'c8')));
+    });
+
+    test('Black queenside castling disallowed if queenside rook has moved in move memory', () {
+      final gamestate = GameState.atPosition(
+        Player.black,
+        [
+          [bR, __, __, __, bK, __, __, bR],
+          [bp, bp, bp, bp, bp, bp, bp, bp],
+          [__, __, __, __, __, __, __, __],
+          [__, __, __, __, __, __, __, __],
+          [__, __, __, __, __, __, __, __],
+          [__, __, __, __, __, __, __, __],
+          [wp, wp, wp, wp, wp, wp, wp, wp],
+          [wR, __, __, __, wK, __, __, wR],
+        ],
+        blackMoves: [
+          const Move(PieceType.rook, 'a8', 'a7'),
+          const Move(PieceType.rook, 'a7', 'a8'),
+        ],
+      );
+
+      expect(gamestate.legalMoves, contains(const Move(PieceType.king, 'e8', 'g8')));
+      expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.king, 'e8', 'c8'))));
     });
 
     test('Short castling disallowed if transit square f1 is attacked by enemy piece', () {
@@ -753,6 +889,39 @@ void main() {
       // Moving along the pin diagonal (c3, b4, a5) is allowed.
       expect(gamestate.legalMoves, contains(const Move(PieceType.bishop, 'd2', 'c3')));
       expect(gamestate.legalMoves, contains(const Move(PieceType.bishop, 'd2', 'a5'))); // capture pinning bB
+    });
+  });
+
+  group('Move Memory Tracking (whiteMoves and blackMoves)', () {
+    test('Move memory accumulates whiteMoves and blackMoves when moves are applied', () {
+      final gamestate = GameState();
+      expect(gamestate.whiteMoves, isEmpty);
+      expect(gamestate.blackMoves, isEmpty);
+
+      const whiteMove1 = Move(PieceType.pawn, 'e2', 'e4');
+      gamestate.applyMove(whiteMove1);
+      expect(gamestate.whiteMoves, equals([whiteMove1]));
+      expect(gamestate.blackMoves, isEmpty);
+
+      const blackMove1 = Move(PieceType.pawn, 'e7', 'e5');
+      gamestate.applyMove(blackMove1);
+      expect(gamestate.whiteMoves, equals([whiteMove1]));
+      expect(gamestate.blackMoves, equals([blackMove1]));
+
+      const whiteMove2 = Move(PieceType.knight, 'g1', 'f3');
+      gamestate.applyMove(whiteMove2);
+      expect(gamestate.whiteMoves, equals([whiteMove1, whiteMove2]));
+      expect(gamestate.blackMoves, equals([blackMove1]));
+    });
+
+    test('GameState.next preserves and appends to move memory', () {
+      final gamestate = GameState();
+      const whiteMove1 = Move(PieceType.pawn, 'e2', 'e4');
+      final nextState = GameState.next(gamestate, whiteMove1);
+
+      expect(nextState.whiteMoves, equals([whiteMove1]));
+      expect(nextState.blackMoves, isEmpty);
+      expect(gamestate.whiteMoves, isEmpty); // Ensure parent state moves are not mutated
     });
   });
 }
