@@ -24,17 +24,58 @@ class GameState {
 
   bool _isCalculatingCheck = false;
 
-  GameState() {
+  GameState()
+      : whiteMoves = [],
+        blackMoves = [] {
     _calcAllLegalMoves();
   }
-  GameState.raw(this.turnPlayer, this.board, {bool isCalculatingCheck = false})
-      : _isCalculatingCheck = isCalculatingCheck;
+
+  GameState.raw(
+    this.turnPlayer,
+    this.board, {
+    List<Move> whiteMoves = const [],
+    List<Move> blackMoves = const [],
+    bool isCalculatingCheck = false,
+  })  : whiteMoves = List.of(whiteMoves),
+        blackMoves = List.of(blackMoves),
+        _isCalculatingCheck = isCalculatingCheck;
+
+  GameState.atPosition(
+    this.turnPlayer,
+    List<List<Piece?>> grid, {
+    List<Move> whiteMoves = const [],
+    List<Move> blackMoves = const [],
+  })  : board = Board.position(grid),
+        whiteMoves = List.of(whiteMoves),
+        blackMoves = List.of(blackMoves) {
+    _calcAllLegalMoves();
+  }
+
+  GameState.next(GameState current, Move move)
+      : board = current.board.clone(),
+        turnPlayer = current.turnPlayer * (-1),
+        whiteMoves = List.of(current.whiteMoves),
+        blackMoves = List.of(current.blackMoves) {
+    board.applyMove(move);
+
+    if (current.turnPlayer == Player.white) {
+      whiteMoves.add(move);
+    } else {
+      blackMoves.add(move);
+    }
+  }
 
   bool isKingInCheck([Player? player]) {
     if (_isCalculatingCheck) return false;
     final targetPlayer = player ?? turnPlayer;
     final opponent = targetPlayer * (-1);
-    final opponentState = GameState.raw(opponent, board, isCalculatingCheck: true);
+    final opponentState = GameState.raw(
+      opponent,
+      board,
+      whiteMoves: whiteMoves,
+      blackMoves: blackMoves,
+      isCalculatingCheck: true,
+    );
     opponentState._calcAllCandidateMoves();
     for (var move in opponentState.candidateMoves) {
       final piece = board[move.endSquare];
@@ -44,25 +85,7 @@ class GameState {
     }
     return false;
   }
-
-  GameState.atPosition(
-    this.turnPlayer,
-    List<List<Piece?>> grid
-  ) {
-    board = Board.position(grid);
-    _calcAllLegalMoves();
-  }
-
-  GameState.next(GameState current, Move move) {
-    board = current.board.clone();
-    turnPlayer = current.turnPlayer;
-    whiteMoves = current.whiteMoves;
-    blackMoves = current.blackMoves;
-
-    board.applyMove(move);
-    turnPlayer = current.turnPlayer * (-1);
-  }
-
+  
   bool hasFriendlyPiece(String square) => board[square]?.player == turnPlayer;
 
 
@@ -175,16 +198,21 @@ class GameState {
       targetSquare = '${file + n}${rank + turnPlayer.unit}';
       bool canCaptureDiagonally = board[targetSquare]?.player == turnPlayer * (-1);
       bool canCaptureEnPassant = false;
-      try {
-        final lastMove = turnPlayer == Player.white ? whiteMoves.last : blackMoves.last ;
+
+      final opponentMoves =
+          turnPlayer == Player.white ? blackMoves : whiteMoves;
+
+      if (opponentMoves.isNotEmpty) {
+        final lastMove = opponentMoves.last;
+
         if (
-            lastMove.type == PieceType.pawn &&
-            lastMove.endSquare == '${file + n}$rank' &&
-            lastMove.startSquare == '${file + n}${rank + 2 * turnPlayer.unit}') {
+          lastMove.type == PieceType.pawn &&
+          lastMove.endSquare == '${file + n}$rank' &&
+          lastMove.startSquare ==
+              '${file + n}${rank + 2 * turnPlayer.unit}'
+        ) {
           canCaptureEnPassant = true;
         }
-      } on StateError {
-        canCaptureEnPassant = false;
       }
       if (canCaptureDiagonally || canCaptureEnPassant) {
         _addCandidateMove(PieceType.pawn, square, targetSquare);
