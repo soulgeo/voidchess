@@ -44,14 +44,15 @@ void main() {
 
     test('Black default starting position has 20 legal moves according to chess rules', () {
       final gamestate = GameState.atPosition(Player.black, [
-        [bR, bN, bB, bQ, bK, bB, bN, bR],
-        [bp, bp, bp, bp, bp, bp, bp, bp],
-        [__, __, __, __, __, __, __, __],
-        [__, __, __, __, __, __, __, __],
-        [__, __, __, __, __, __, __, __],
-        [__, __, __, __, __, __, __, __],
-        [wp, wp, wp, wp, wp, wp, wp, wp],
-        [wR, wN, wB, wQ, wK, wB, wN, wR],
+        [bR, bN, bB, bQ, bK, bB, bN, bR], // 8
+        [bp, bp, bp, bp, bp, bp, bp, bp], // 7
+        [__, __, __, __, __, __, __, __], // 6
+        [__, __, __, __, __, __, __, __], // 5
+        [__, __, __, __, __, __, __, __], // 4
+        [__, __, __, __, __, __, __, __], // 3
+        [wp, wp, wp, wp, wp, wp, wp, wp], // 2
+        [wR, wN, wB, wQ, wK, wB, wN, wR], // 1
+      //  a   b   c   d   e   f   g   h
       ]);
       gamestate.calculateLegalMoves();
 
@@ -90,14 +91,15 @@ void main() {
   group('Pawn Legal Moves (Chess Rules)', () {
     test('White pawn single and double step on initial rank when clear', () {
       final gamestate = GameState.atPosition(Player.white, [
-        [__, __, __, __, __, __, __, bK], // R0 = Rank 8 (bK at h8)
-        [__, __, __, __, __, __, __, __], // R1 = Rank 7
-        [__, __, __, __, __, __, __, __], // R2 = Rank 6
-        [__, __, __, __, __, __, __, __], // R3 = Rank 5
-        [__, __, __, __, __, __, __, __], // R4 = Rank 4
-        [__, __, __, __, __, __, __, __], // R5 = Rank 3
-        [__, __, __, __, wp, __, __, __], // R6 = Rank 2 (e2)
-        [wK, __, __, __, __, __, __, __], // R7 = Rank 1 (wK at a1)
+        [__, __, __, __, __, __, __, bK], // 8
+        [__, __, __, __, __, __, __, __], // 7
+        [__, __, __, __, __, __, __, __], // 6
+        [__, __, __, __, __, __, __, __], // 5
+        [__, __, __, __, __, __, __, __], // 4
+        [__, __, __, __, __, __, __, __], // 3
+        [__, __, __, __, wp, __, __, __], // 2
+        [wK, __, __, __, __, __, __, __], // 1
+      //  a   b   c   d   e   f   g   h
       ]);
       gamestate.calculateLegalMoves();
       final pawnMoves = gamestate.legalMoves.where((m) => m.type == PieceType.pawn).toList();
@@ -109,14 +111,15 @@ void main() {
 
     test('White pawn single step only on non-initial rank', () {
       final gamestate = GameState.atPosition(Player.white, [
-        [__, __, __, __, __, __, __, bK], // R0 = Rank 8 (bK at h8)
-        [__, __, __, __, __, __, __, __], // R1 = Rank 7
-        [__, __, __, __, __, __, __, __], // R2 = Rank 6
-        [__, __, __, __, wp, __, __, __], // R3 = Rank 5 (e5)
-        [__, __, __, __, __, __, __, __], // R4 = Rank 4
-        [__, __, __, __, __, __, __, __], // R5 = Rank 3
-        [__, __, __, __, __, __, __, __], // R6 = Rank 2
-        [wK, __, __, __, __, __, __, __], // R7 = Rank 1 (wK at a1)
+        [__, __, __, __, __, __, __, bK], // 8
+        [__, __, __, __, __, __, __, __], // 7
+        [__, __, __, __, __, __, __, __], // 6
+        [__, __, __, __, wp, __, __, __], // 5
+        [__, __, __, __, __, __, __, __], // 4
+        [__, __, __, __, __, __, __, __], // 3
+        [__, __, __, __, __, __, __, __], // 2
+        [wK, __, __, __, __, __, __, __], // 1
+      //  a   b   c   d   e   f   g   h
       ]);
       gamestate.calculateLegalMoves();
       final pawnMoves = gamestate.legalMoves.where((m) => m.type == PieceType.pawn).toList();
@@ -125,14 +128,15 @@ void main() {
 
     test('White pawn blocked forward by enemy piece cannot move forward', () {
       final gamestate = GameState.atPosition(Player.white, [
-        [__, __, __, __, __, __, __, bK], // R0 = Rank 8 (bK at h8)
-        [__, __, __, __, __, __, __, __], // R1 = Rank 7
-        [__, __, __, __, __, __, __, __], // R2 = Rank 6
-        [__, __, __, __, __, __, __, __], // R3 = Rank 5
-        [__, __, __, __, __, __, __, __], // R4 = Rank 4
-        [__, __, __, __, bp, __, __, __], // R5 = Rank 3 (e3 - enemy piece)
-        [__, __, __, __, wp, __, __, __], // R6 = Rank 2 (e2)
-        [wK, __, __, __, __, __, __, __], // R7 = Rank 1 (wK at a1)
+        [__, __, __, __, __, __, __, bK], // 8
+        [__, __, __, __, __, __, __, __], // 7
+        [__, __, __, __, __, __, __, __], // 6
+        [__, __, __, __, __, __, __, __], // 5
+        [__, __, __, __, __, __, __, __], // 4
+        [__, __, __, __, bp, __, __, __], // 3
+        [__, __, __, __, wp, __, __, __], // 2
+        [wK, __, __, __, __, __, __, __], // 1
+      //  a   b   c   d   e   f   g   h
       ]);
       gamestate.calculateLegalMoves();
       expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.pawn, 'e2', 'e3'))));
@@ -141,14 +145,15 @@ void main() {
 
     test('White pawn diagonal capture of enemy pieces', () {
       final gamestate = GameState.atPosition(Player.white, [
-        [__, __, __, __, __, __, __, bK], // R0 = Rank 8 (bK at h8)
-        [__, __, __, __, __, __, __, __], // R1 = Rank 7
-        [__, __, __, __, __, __, __, __], // R2 = Rank 6
-        [__, __, __, bp, __, bp, __, __], // R3 = Rank 5: d5 (bp), f5 (bp)
-        [__, __, __, __, wp, __, __, __], // R4 = Rank 4: e4 (wp)
-        [__, __, __, __, __, __, __, __], // R5 = Rank 3
-        [__, __, __, __, __, __, __, __], // R6 = Rank 2
-        [wK, __, __, __, __, __, __, __], // R7 = Rank 1 (wK at a1)
+        [__, __, __, __, __, __, __, bK], // 8
+        [__, __, __, __, __, __, __, __], // 7
+        [__, __, __, __, __, __, __, __], // 6
+        [__, __, __, bp, __, bp, __, __], // 5
+        [__, __, __, __, wp, __, __, __], // 4
+        [__, __, __, __, __, __, __, __], // 3
+        [__, __, __, __, __, __, __, __], // 2
+        [wK, __, __, __, __, __, __, __], // 1
+      //  a   b   c   d   e   f   g   h
       ]);
       gamestate.calculateLegalMoves();
 
@@ -159,14 +164,15 @@ void main() {
 
     test('White pawn cannot move diagonally to empty or friendly squares', () {
       final gamestate = GameState.atPosition(Player.white, [
-        [__, __, __, __, __, __, __, bK], // R0 = Rank 8 (bK at h8)
-        [__, __, __, __, __, __, __, __], // R1 = Rank 7
-        [__, __, __, __, __, __, __, __], // R2 = Rank 6
-        [__, __, __, wp, __, __, __, __], // R3 = Rank 5: d5 (friendly wp), f5 is empty
-        [__, __, __, __, wp, __, __, __], // R4 = Rank 4: e4 (wp)
-        [__, __, __, __, __, __, __, __], // R5 = Rank 3
-        [__, __, __, __, __, __, __, __], // R6 = Rank 2
-        [wK, __, __, __, __, __, __, __], // R7 = Rank 1 (wK at a1)
+        [__, __, __, __, __, __, __, bK], // 8
+        [__, __, __, __, __, __, __, __], // 7
+        [__, __, __, __, __, __, __, __], // 6
+        [__, __, __, wp, __, __, __, __], // 5
+        [__, __, __, __, wp, __, __, __], // 4
+        [__, __, __, __, __, __, __, __], // 3
+        [__, __, __, __, __, __, __, __], // 2
+        [wK, __, __, __, __, __, __, __], // 1
+      //  a   b   c   d   e   f   g   h
       ]);
       gamestate.calculateLegalMoves();
 
@@ -176,14 +182,15 @@ void main() {
 
     test('Black pawn diagonal capture of enemy piece', () {
       final gamestate = GameState.atPosition(Player.black, [
-        [__, __, __, __, __, __, __, bK], // R0 = Rank 8 (bK at h8)
-        [__, __, __, __, __, __, __, __], // R1 = Rank 7
-        [__, __, __, bp, __, __, __, __], // R2 = Rank 6: d6 (bp)
-        [__, __, wp, __, __, __, __, __], // R3 = Rank 5: c5 (enemy wp)
-        [__, __, __, __, __, __, __, __], // R4 = Rank 4
-        [__, __, __, __, __, __, __, __], // R5 = Rank 3
-        [__, __, __, __, __, __, __, __], // R6 = Rank 2
-        [wK, __, __, __, __, __, __, __], // R7 = Rank 1 (wK at a1)
+        [__, __, __, __, __, __, __, bK], // 8
+        [__, __, __, __, __, __, __, __], // 7
+        [__, __, __, bp, __, __, __, __], // 6
+        [__, __, wp, __, __, __, __, __], // 5
+        [__, __, __, __, __, __, __, __], // 4
+        [__, __, __, __, __, __, __, __], // 3
+        [__, __, __, __, __, __, __, __], // 2
+        [wK, __, __, __, __, __, __, __], // 1
+      //  a   b   c   d   e   f   g   h
       ]);
       gamestate.calculateLegalMoves();
 
@@ -197,14 +204,15 @@ void main() {
       final gamestate = GameState.atPosition(
         Player.white,
         [
-          [__, __, __, __, __, __, __, bK], // R0 = Rank 8 (bK at h8)
-          [__, __, __, __, __, __, __, __], // R1 = Rank 7
-          [__, __, __, __, __, __, __, __], // R2 = Rank 6
-          [__, __, __, bp, wp, __, __, __], // R3 = Rank 5: d5 (bp), e5 (wp)
-          [__, __, __, __, __, __, __, __], // R4 = Rank 4
-          [__, __, __, __, __, __, __, __], // R5 = Rank 3
-          [__, __, __, __, __, __, __, __], // R6 = Rank 2
-          [wK, __, __, __, __, __, __, __], // R7 = Rank 1 (wK at a1)
+          [__, __, __, __, __, __, __, bK], // 8
+          [__, __, __, __, __, __, __, __], // 7
+          [__, __, __, __, __, __, __, __], // 6
+          [__, __, __, bp, wp, __, __, __], // 5
+          [__, __, __, __, __, __, __, __], // 4
+          [__, __, __, __, __, __, __, __], // 3
+          [__, __, __, __, __, __, __, __], // 2
+          [wK, __, __, __, __, __, __, __], // 1
+        //  a   b   c   d   e   f   g   h
         ],
         blackMoves: [const Move(PieceType.pawn, 'd7', 'd5')],
       );
@@ -224,14 +232,15 @@ void main() {
       final gamestate = GameState.atPosition(
         Player.black,
         [
-          [__, __, __, __, __, __, __, bK], // R0 = Rank 8 (bK at h8)
-          [__, __, __, __, __, __, __, __], // R1 = Rank 7
-          [__, __, __, __, __, __, __, __], // R2 = Rank 6
-          [__, __, __, __, __, __, __, __], // R3 = Rank 5
-          [__, __, __, bp, wp, __, __, __], // R4 = Rank 4: d4 (bp), e4 (wp)
-          [__, __, __, __, __, __, __, __], // R5 = Rank 3
-          [__, __, __, __, __, __, __, __], // R6 = Rank 2
-          [wK, __, __, __, __, __, __, __], // R7 = Rank 1 (wK at a1)
+          [__, __, __, __, __, __, __, bK], // 8
+          [__, __, __, __, __, __, __, __], // 7
+          [__, __, __, __, __, __, __, __], // 6
+          [__, __, __, __, __, __, __, __], // 5
+          [__, __, __, bp, wp, __, __, __], // 4
+          [__, __, __, __, __, __, __, __], // 3
+          [__, __, __, __, __, __, __, __], // 2
+          [wK, __, __, __, __, __, __, __], // 1
+        //  a   b   c   d   e   f   g   h
         ],
         whiteMoves: [const Move(PieceType.pawn, 'e2', 'e4')],
       );
@@ -251,14 +260,15 @@ void main() {
       final gamestate = GameState.atPosition(
         Player.white,
         [
-          [__, __, __, __, __, __, __, bK], // R0 = Rank 8
-          [__, __, __, __, __, __, __, __], // R1 = Rank 7
-          [__, __, __, __, __, __, __, __], // R2 = Rank 6
-          [__, __, __, bp, wp, __, __, __], // R3 = Rank 5: d5 (bp), e5 (wp)
-          [__, __, __, __, __, __, __, __], // R4 = Rank 4
-          [__, __, __, __, __, __, __, __], // R5 = Rank 3
-          [__, __, __, __, __, __, __, __], // R6 = Rank 2
-          [wK, __, __, __, __, __, __, __], // R7 = Rank 1
+          [__, __, __, __, __, __, __, bK], // 8
+          [__, __, __, __, __, __, __, __], // 7
+          [__, __, __, __, __, __, __, __], // 6
+          [__, __, __, bp, wp, __, __, __], // 5
+          [__, __, __, __, __, __, __, __], // 4
+          [__, __, __, __, __, __, __, __], // 3
+          [__, __, __, __, __, __, __, __], // 2
+          [wK, __, __, __, __, __, __, __], // 1
+        //  a   b   c   d   e   f   g   h
         ],
         blackMoves: [const Move(PieceType.pawn, 'd6', 'd5')], // single step from d6
       );
@@ -270,14 +280,15 @@ void main() {
       final gamestate = GameState.atPosition(
         Player.white,
         [
-          [__, __, __, __, __, __, __, bK], // R0 = Rank 8
-          [__, __, __, __, __, __, __, __], // R1 = Rank 7
-          [__, __, __, __, __, __, __, __], // R2 = Rank 6
-          [wK, __, __, bp, wp, __, __, bR], // R3 = Rank 5: a5 (wK), d5 (bp), e5 (wp), h5 (bR)
-          [__, __, __, __, __, __, __, __], // R4 = Rank 4
-          [__, __, __, __, __, __, __, __], // R5 = Rank 3
-          [__, __, __, __, __, __, __, __], // R6 = Rank 2
-          [__, __, __, __, __, __, __, __], // R7 = Rank 1
+          [__, __, __, __, __, __, __, bK], // 8
+          [__, __, __, __, __, __, __, __], // 7
+          [__, __, __, __, __, __, __, __], // 6
+          [wK, __, __, bp, wp, __, __, bR], // 5
+          [__, __, __, __, __, __, __, __], // 4
+          [__, __, __, __, __, __, __, __], // 3
+          [__, __, __, __, __, __, __, __], // 2
+          [__, __, __, __, __, __, __, __], // 1
+        //  a   b   c   d   e   f   g   h
         ],
         blackMoves: [const Move(PieceType.pawn, 'd7', 'd5')],
       );
@@ -290,14 +301,15 @@ void main() {
   group('Castling Legal Moves (Chess Rules)', () {
     test('White short and long castling are legal when requirements are met', () {
       final gamestate = GameState.atPosition(Player.white, [
-        [bR, __, __, __, bK, __, __, bR], // R0 = Rank 8
-        [bp, bp, bp, bp, bp, bp, bp, bp], // R1 = Rank 7
-        [__, __, __, __, __, __, __, __], // R2 = Rank 6
-        [__, __, __, __, __, __, __, __], // R3 = Rank 5
-        [__, __, __, __, __, __, __, __], // R4 = Rank 4
-        [__, __, __, __, __, __, __, __], // R5 = Rank 3
-        [wp, wp, wp, wp, wp, wp, wp, wp], // R6 = Rank 2
-        [wR, __, __, __, wK, __, __, wR], // R7 = Rank 1: wR (a1), wK (e1), wR (h1)
+        [bR, __, __, __, bK, __, __, bR], // 8
+        [bp, bp, bp, bp, bp, bp, bp, bp], // 7
+        [__, __, __, __, __, __, __, __], // 6
+        [__, __, __, __, __, __, __, __], // 5
+        [__, __, __, __, __, __, __, __], // 4
+        [__, __, __, __, __, __, __, __], // 3
+        [wp, wp, wp, wp, wp, wp, wp, wp], // 2
+        [wR, __, __, __, wK, __, __, wR], // 1
+      //  a   b   c   d   e   f   g   h
       ]);
 
       expect(gamestate.legalMoves, contains(const Move(PieceType.king, 'e1', 'g1'))); // Short castle
@@ -305,17 +317,16 @@ void main() {
     });
 
     test('White castling disallowed if King has moved in move memory', () {
-      final gamestate = GameState.atPosition(
-        Player.white,
-        [
-          [bR, __, __, __, bK, __, __, bR],
-          [bp, bp, bp, bp, bp, bp, bp, bp],
-          [__, __, __, __, __, __, __, __],
-          [__, __, __, __, __, __, __, __],
-          [__, __, __, __, __, __, __, __],
-          [__, __, __, __, __, __, __, __],
-          [wp, wp, wp, wp, wp, wp, wp, wp],
-          [wR, __, __, __, wK, __, __, wR],
+      final gamestate = GameState.atPosition(Player.white, [
+          [bR, __, __, __, bK, __, __, bR], // 8
+          [bp, bp, bp, bp, bp, bp, bp, bp], // 7
+          [__, __, __, __, __, __, __, __], // 6
+          [__, __, __, __, __, __, __, __], // 5
+          [__, __, __, __, __, __, __, __], // 4
+          [__, __, __, __, __, __, __, __], // 3
+          [wp, wp, wp, wp, wp, wp, wp, wp], // 2
+          [wR, __, __, __, wK, __, __, wR], // 1
+        //  a   b   c   d   e   f   g   h
         ],
         whiteMoves: [
           const Move(PieceType.king, 'e1', 'e2'),
@@ -331,14 +342,15 @@ void main() {
       final gamestate = GameState.atPosition(
         Player.white,
         [
-          [bR, __, __, __, bK, __, __, bR],
-          [bp, bp, bp, bp, bp, bp, bp, bp],
-          [__, __, __, __, __, __, __, __],
-          [__, __, __, __, __, __, __, __],
-          [__, __, __, __, __, __, __, __],
-          [__, __, __, __, __, __, __, __],
-          [wp, wp, wp, wp, wp, wp, wp, wp],
-          [wR, __, __, __, wK, __, __, wR],
+          [bR, __, __, __, bK, __, __, bR], // 8
+          [bp, bp, bp, bp, bp, bp, bp, bp], // 7
+          [__, __, __, __, __, __, __, __], // 6
+          [__, __, __, __, __, __, __, __], // 5
+          [__, __, __, __, __, __, __, __], // 4
+          [__, __, __, __, __, __, __, __], // 3
+          [wp, wp, wp, wp, wp, wp, wp, wp], // 2
+          [wR, __, __, __, wK, __, __, wR], // 1
+        //  a   b   c   d   e   f   g   h
         ],
         whiteMoves: [
           const Move(PieceType.rook, 'h1', 'h2'),
@@ -354,14 +366,15 @@ void main() {
       final gamestate = GameState.atPosition(
         Player.white,
         [
-          [bR, __, __, __, bK, __, __, bR],
-          [bp, bp, bp, bp, bp, bp, bp, bp],
-          [__, __, __, __, __, __, __, __],
-          [__, __, __, __, __, __, __, __],
-          [__, __, __, __, __, __, __, __],
-          [__, __, __, __, __, __, __, __],
-          [wp, wp, wp, wp, wp, wp, wp, wp],
-          [wR, __, __, __, wK, __, __, wR],
+          [bR, __, __, __, bK, __, __, bR], // 8
+          [bp, bp, bp, bp, bp, bp, bp, bp], // 7
+          [__, __, __, __, __, __, __, __], // 6
+          [__, __, __, __, __, __, __, __], // 5
+          [__, __, __, __, __, __, __, __], // 4
+          [__, __, __, __, __, __, __, __], // 3
+          [wp, wp, wp, wp, wp, wp, wp, wp], // 2
+          [wR, __, __, __, wK, __, __, wR], // 1
+        //  a   b   c   d   e   f   g   h
         ],
         whiteMoves: [
           const Move(PieceType.rook, 'a1', 'a2'),
@@ -375,14 +388,15 @@ void main() {
 
     test('Black short and long castling are legal when requirements are met', () {
       final gamestate = GameState.atPosition(Player.black, [
-        [bR, __, __, __, bK, __, __, bR], // R0 = Rank 8: bR (a8), bK (e8), bR (h8)
-        [bp, bp, bp, bp, bp, bp, bp, bp], // R1 = Rank 7
-        [__, __, __, __, __, __, __, __], // R2 = Rank 6
-        [__, __, __, __, __, __, __, __], // R3 = Rank 5
-        [__, __, __, __, __, __, __, __], // R4 = Rank 4
-        [__, __, __, __, __, __, __, __], // R5 = Rank 3
-        [wp, wp, wp, wp, wp, wp, wp, wp], // R6 = Rank 2
-        [wR, __, __, __, wK, __, __, wR], // R7 = Rank 1
+        [bR, __, __, __, bK, __, __, bR], // 8
+        [bp, bp, bp, bp, bp, bp, bp, bp], // 7
+        [__, __, __, __, __, __, __, __], // 6
+        [__, __, __, __, __, __, __, __], // 5
+        [__, __, __, __, __, __, __, __], // 4
+        [__, __, __, __, __, __, __, __], // 3
+        [wp, wp, wp, wp, wp, wp, wp, wp], // 2
+        [wR, __, __, __, wK, __, __, wR], // 1
+      //  a   b   c   d   e   f   g   h
       ]);
 
       expect(gamestate.legalMoves, contains(const Move(PieceType.king, 'e8', 'g8'))); // Short castle
@@ -393,14 +407,15 @@ void main() {
       final gamestate = GameState.atPosition(
         Player.black,
         [
-          [bR, __, __, __, bK, __, __, bR],
-          [bp, bp, bp, bp, bp, bp, bp, bp],
-          [__, __, __, __, __, __, __, __],
-          [__, __, __, __, __, __, __, __],
-          [__, __, __, __, __, __, __, __],
-          [__, __, __, __, __, __, __, __],
-          [wp, wp, wp, wp, wp, wp, wp, wp],
-          [wR, __, __, __, wK, __, __, wR],
+          [bR, __, __, __, bK, __, __, bR], // 8
+          [bp, bp, bp, bp, bp, bp, bp, bp], // 7
+          [__, __, __, __, __, __, __, __], // 6
+          [__, __, __, __, __, __, __, __], // 5
+          [__, __, __, __, __, __, __, __], // 4
+          [__, __, __, __, __, __, __, __], // 3
+          [wp, wp, wp, wp, wp, wp, wp, wp], // 2
+          [wR, __, __, __, wK, __, __, wR], // 1
+        //  a   b   c   d   e   f   g   h
         ],
         blackMoves: [
           const Move(PieceType.king, 'e8', 'e7'),
@@ -416,14 +431,15 @@ void main() {
       final gamestate = GameState.atPosition(
         Player.black,
         [
-          [bR, __, __, __, bK, __, __, bR],
-          [bp, bp, bp, bp, bp, bp, bp, bp],
-          [__, __, __, __, __, __, __, __],
-          [__, __, __, __, __, __, __, __],
-          [__, __, __, __, __, __, __, __],
-          [__, __, __, __, __, __, __, __],
-          [wp, wp, wp, wp, wp, wp, wp, wp],
-          [wR, __, __, __, wK, __, __, wR],
+          [bR, __, __, __, bK, __, __, bR], // 8
+          [bp, bp, bp, bp, bp, bp, bp, bp], // 7
+          [__, __, __, __, __, __, __, __], // 6
+          [__, __, __, __, __, __, __, __], // 5
+          [__, __, __, __, __, __, __, __], // 4
+          [__, __, __, __, __, __, __, __], // 3
+          [wp, wp, wp, wp, wp, wp, wp, wp], // 2
+          [wR, __, __, __, wK, __, __, wR], // 1
+        //  a   b   c   d   e   f   g   h
         ],
         blackMoves: [
           const Move(PieceType.rook, 'h8', 'h7'),
@@ -439,14 +455,15 @@ void main() {
       final gamestate = GameState.atPosition(
         Player.black,
         [
-          [bR, __, __, __, bK, __, __, bR],
-          [bp, bp, bp, bp, bp, bp, bp, bp],
-          [__, __, __, __, __, __, __, __],
-          [__, __, __, __, __, __, __, __],
-          [__, __, __, __, __, __, __, __],
-          [__, __, __, __, __, __, __, __],
-          [wp, wp, wp, wp, wp, wp, wp, wp],
-          [wR, __, __, __, wK, __, __, wR],
+          [bR, __, __, __, bK, __, __, bR], // 8
+          [bp, bp, bp, bp, bp, bp, bp, bp], // 7
+          [__, __, __, __, __, __, __, __], // 6
+          [__, __, __, __, __, __, __, __], // 5
+          [__, __, __, __, __, __, __, __], // 4
+          [__, __, __, __, __, __, __, __], // 3
+          [wp, wp, wp, wp, wp, wp, wp, wp], // 2
+          [wR, __, __, __, wK, __, __, wR], // 1
+        //  a   b   c   d   e   f   g   h
         ],
         blackMoves: [
           const Move(PieceType.rook, 'a8', 'a7'),
@@ -460,14 +477,15 @@ void main() {
 
     test('Short castling disallowed if transit square f1 is attacked by enemy piece', () {
       final gamestate = GameState.atPosition(Player.white, [
-        [bR, __, __, __, bK, __, __, bR],
-        [bp, bp, bp, bp, __, bp, bp, bp], // f7 empty
-        [__, __, __, __, __, __, __, __],
-        [__, __, __, __, __, __, __, __],
-        [__, __, bB, __, __, __, __, __], // bB at c4 attacking f1
-        [__, __, __, __, __, __, __, __],
-        [wp, wp, wp, wp, __, wp, wp, wp], // e2 empty so c4 bishop reaches f1
-        [wR, __, __, __, wK, __, __, wR],
+        [bR, __, __, __, bK, __, __, bR], // 8
+        [bp, bp, bp, bp, __, bp, bp, bp], // 7
+        [__, __, __, __, __, __, __, __], // 6
+        [__, __, __, __, __, __, __, __], // 5
+        [__, __, bB, __, __, __, __, __], // 4
+        [__, __, __, __, __, __, __, __], // 3
+        [wp, wp, wp, wp, __, wp, wp, wp], // 2
+        [wR, __, __, __, wK, __, __, wR], // 1
+      //  a   b   c   d   e   f   g   h
       ]);
 
       // Transit square f1 is attacked by bB on c4
@@ -476,14 +494,15 @@ void main() {
 
     test('Castling disallowed if King is currently in check', () {
       final gamestate = GameState.atPosition(Player.white, [
-        [bR, __, __, __, bK, __, __, bR],
-        [bp, bp, bp, bp, __, bp, bp, bp],
-        [__, __, __, __, __, __, __, __],
-        [__, __, __, __, __, __, __, __],
-        [__, __, __, __, bR, __, __, __], // bR at e4 checking wK on e1
-        [__, __, __, __, __, __, __, __],
-        [wp, wp, wp, wp, __, wp, wp, wp], // e2 empty so e4 rook checks e1 king
-        [wR, __, __, __, wK, __, __, wR],
+        [bR, __, __, __, bK, __, __, bR], // 8
+        [bp, bp, bp, bp, __, bp, bp, bp], // 7
+        [__, __, __, __, __, __, __, __], // 6
+        [__, __, __, __, __, __, __, __], // 5
+        [__, __, __, __, bR, __, __, __], // 4
+        [__, __, __, __, __, __, __, __], // 3
+        [wp, wp, wp, wp, __, wp, wp, wp], // 2
+        [wR, __, __, __, wK, __, __, wR], // 1
+      //  a   b   c   d   e   f   g   h
       ]);
 
       expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.king, 'e1', 'g1'))));
@@ -494,14 +513,15 @@ void main() {
   group('Knight Legal Moves (Chess Rules)', () {
     test('Knight in center of empty board (d5) has 8 legal moves', () {
       final gamestate = GameState.atPosition(Player.white, [
-        [__, __, __, __, __, __, __, bK], // R0 = Rank 8 (bK at h8)
-        [__, __, __, __, __, __, __, __], // R1 = Rank 7
-        [__, __, __, __, __, __, __, __], // R2 = Rank 6
-        [__, __, __, wN, __, __, __, __], // R3 = Rank 5 (d5)
-        [__, __, __, __, __, __, __, __], // R4 = Rank 4
-        [__, __, __, __, __, __, __, __], // R5 = Rank 3
-        [__, __, __, __, __, __, __, __], // R6 = Rank 2
-        [wK, __, __, __, __, __, __, __], // R7 = Rank 1 (wK at a1)
+        [__, __, __, __, __, __, __, bK], // 8
+        [__, __, __, __, __, __, __, __], // 7
+        [__, __, __, __, __, __, __, __], // 6
+        [__, __, __, wN, __, __, __, __], // 5
+        [__, __, __, __, __, __, __, __], // 4
+        [__, __, __, __, __, __, __, __], // 3
+        [__, __, __, __, __, __, __, __], // 2
+        [wK, __, __, __, __, __, __, __], // 1
+      //  a   b   c   d   e   f   g   h
       ]);
       gamestate.calculateLegalMoves();
       expect(
@@ -517,14 +537,15 @@ void main() {
 
     test('Knight in corner (a1) has 2 legal moves', () {
       final gamestate = GameState.atPosition(Player.white, [
-        [__, __, __, __, __, __, __, bK], // R0 = Rank 8 (bK at h8)
-        [__, __, __, __, __, __, __, __], // R1 = Rank 7
-        [__, __, __, __, __, __, __, __], // R2 = Rank 6
-        [__, __, __, __, __, __, __, __], // R3 = Rank 5
-        [__, __, __, __, __, __, __, __], // R4 = Rank 4
-        [__, __, __, __, __, __, __, __], // R5 = Rank 3
-        [__, __, __, __, __, __, __, __], // R6 = Rank 2
-        [wN, __, __, __, wK, __, __, __], // R7 = Rank 1 (wN at a1, wK at e1)
+        [__, __, __, __, __, __, __, bK], // 8
+        [__, __, __, __, __, __, __, __], // 7
+        [__, __, __, __, __, __, __, __], // 6
+        [__, __, __, __, __, __, __, __], // 5
+        [__, __, __, __, __, __, __, __], // 4
+        [__, __, __, __, __, __, __, __], // 3
+        [__, __, __, __, __, __, __, __], // 2
+        [wN, __, __, __, wK, __, __, __], // 1
+      //  a   b   c   d   e   f   g   h
       ]);
       gamestate.calculateLegalMoves();
       expect(
@@ -538,14 +559,15 @@ void main() {
 
     test('Knight captures enemy piece and avoids friendly piece', () {
       final gamestate = GameState.atPosition(Player.white, [
-        [__, __, __, __, __, __, __, bK], // R0 = Rank 8 (bK at h8)
-        [__, __, __, __, __, __, __, __], // R1 = Rank 7
-        [__, __, bp, __, wR, __, __, __], // R2 = Rank 6: c6 (bp), e6 (wR)
-        [__, __, __, __, __, __, __, __], // R3 = Rank 5
-        [__, __, __, wN, __, __, __, __], // R4 = Rank 4: d4 (wN)
-        [__, __, __, __, __, __, __, __], // R5 = Rank 3
-        [__, __, __, __, __, __, __, __], // R6 = Rank 2
-        [wK, __, __, __, __, __, __, __], // R7 = Rank 1 (wK at a1)
+        [__, __, __, __, __, __, __, bK], // 8
+        [__, __, __, __, __, __, __, __], // 7
+        [__, __, bp, __, wR, __, __, __], // 6
+        [__, __, __, __, __, __, __, __], // 5
+        [__, __, __, wN, __, __, __, __], // 4
+        [__, __, __, __, __, __, __, __], // 3
+        [__, __, __, __, __, __, __, __], // 2
+        [wK, __, __, __, __, __, __, __], // 1
+      //  a   b   c   d   e   f   g   h
       ]);
       gamestate.calculateLegalMoves();
 
@@ -557,14 +579,15 @@ void main() {
   group('Rook Legal Moves (Chess Rules)', () {
     test('Rook in center of empty board (d4) has 14 legal moves', () {
       final gamestate = GameState.atPosition(Player.white, [
-        [__, __, __, __, __, __, __, bK], // R0 = Rank 8 (bK at h8)
-        [__, __, __, __, __, __, __, __], // R1 = Rank 7
-        [__, __, __, __, __, __, __, __], // R2 = Rank 6
-        [__, __, __, __, __, __, __, __], // R3 = Rank 5
-        [__, __, __, wR, __, __, __, __], // R4 = Rank 4 (d4)
-        [__, __, __, __, __, __, __, __], // R5 = Rank 3
-        [__, __, __, __, __, __, __, __], // R6 = Rank 2
-        [wK, __, __, __, __, __, __, __], // R7 = Rank 1 (wK at a1)
+        [__, __, __, __, __, __, __, bK], // 8
+        [__, __, __, __, __, __, __, __], // 7
+        [__, __, __, __, __, __, __, __], // 6
+        [__, __, __, __, __, __, __, __], // 5
+        [__, __, __, wR, __, __, __, __], // 4
+        [__, __, __, __, __, __, __, __], // 3
+        [__, __, __, __, __, __, __, __], // 2
+        [wK, __, __, __, __, __, __, __], // 1
+      //  a   b   c   d   e   f   g   h
       ]);
       gamestate.calculateLegalMoves();
       expect(
@@ -580,14 +603,15 @@ void main() {
 
     test('Rook ray stops before friendly piece and captures enemy piece', () {
       final gamestate = GameState.atPosition(Player.white, [
-        [__, __, __, __, __, __, __, bK], // R0 = Rank 8 (bK at h8)
-        [__, __, __, __, __, __, __, __], // R1 = Rank 7
-        [__, __, __, wB, __, __, __, __], // R2 = Rank 6: d6 (friendly wB)
-        [__, __, __, __, __, __, __, __], // R3 = Rank 5
-        [__, bp, __, wR, __, __, __, __], // R4 = Rank 4: b4 (enemy bp), d4 (wR)
-        [__, __, __, __, __, __, __, __], // R5 = Rank 3
-        [__, __, __, __, __, __, __, __], // R6 = Rank 2
-        [wK, __, __, __, __, __, __, __], // R7 = Rank 1 (wK at a1)
+        [__, __, __, __, __, __, __, bK], // 8
+        [__, __, __, __, __, __, __, __], // 7
+        [__, __, __, wB, __, __, __, __], // 6
+        [__, __, __, __, __, __, __, __], // 5
+        [__, bp, __, wR, __, __, __, __], // 4
+        [__, __, __, __, __, __, __, __], // 3
+        [__, __, __, __, __, __, __, __], // 2
+        [wK, __, __, __, __, __, __, __], // 1
+      //  a   b   c   d   e   f   g   h
       ]);
       gamestate.calculateLegalMoves();
 
@@ -604,14 +628,15 @@ void main() {
   group('Bishop Legal Moves (Chess Rules)', () {
     test('Bishop in center of empty board (d4) has 13 legal moves', () {
       final gamestate = GameState.atPosition(Player.white, [
-        [wK, __, __, __, __, __, __, __], // R0 = Rank 8 (wK at a8 - off diagonals)
-        [__, __, __, __, __, __, __, __], // R1 = Rank 7
-        [__, __, __, __, __, __, __, __], // R2 = Rank 6
-        [__, __, __, __, __, __, __, __], // R3 = Rank 5
-        [__, __, __, wB, __, __, __, __], // R4 = Rank 4 (d4)
-        [__, __, __, __, __, __, __, __], // R5 = Rank 3
-        [__, __, __, __, __, __, __, __], // R6 = Rank 2
-        [__, __, __, __, __, __, __, bK], // R7 = Rank 1 (bK at h1 - off diagonals)
+        [wK, __, __, __, __, __, __, __], // 8
+        [__, __, __, __, __, __, __, __], // 7
+        [__, __, __, __, __, __, __, __], // 6
+        [__, __, __, __, __, __, __, __], // 5
+        [__, __, __, wB, __, __, __, __], // 4
+        [__, __, __, __, __, __, __, __], // 3
+        [__, __, __, __, __, __, __, __], // 2
+        [__, __, __, __, __, __, __, bK], // 1
+      //  a   b   c   d   e   f   g   h
       ]);
       gamestate.calculateLegalMoves();
       expect(
@@ -627,14 +652,15 @@ void main() {
 
     test('Bishop blocked by friendly and enemy pieces on diagonals', () {
       final gamestate = GameState.atPosition(Player.white, [
-        [wK, __, __, __, __, __, __, __], // R0 = Rank 8 (wK at a8)
-        [__, __, __, __, __, __, __, __], // R1 = Rank 7
-        [__, __, __, __, __, wR, __, __], // R2 = Rank 6: f6 (friendly wR)
-        [__, __, __, __, __, __, __, __], // R3 = Rank 5
-        [__, __, __, wB, __, __, __, __], // R4 = Rank 4: d4 (wB)
-        [__, __, __, __, __, __, __, __], // R5 = Rank 3
-        [__, bp, __, __, __, __, __, __], // R6 = Rank 2: b2 (enemy bp)
-        [__, __, __, __, __, __, __, bK], // R7 = Rank 1 (bK at h1)
+        [wK, __, __, __, __, __, __, __], // 8
+        [__, __, __, __, __, __, __, __], // 7
+        [__, __, __, __, __, wR, __, __], // 6
+        [__, __, __, __, __, __, __, __], // 5
+        [__, __, __, wB, __, __, __, __], // 4
+        [__, __, __, __, __, __, __, __], // 3
+        [__, bp, __, __, __, __, __, __], // 2
+        [__, __, __, __, __, __, __, bK], // 1
+      //  a   b   c   d   e   f   g   h
       ]);
       gamestate.calculateLegalMoves();
 
@@ -651,14 +677,15 @@ void main() {
   group('Queen Legal Moves (Chess Rules)', () {
     test('Queen in center of empty board (d4) has 27 legal moves', () {
       final gamestate = GameState.atPosition(Player.white, [
-        [wK, __, __, __, __, __, __, __], // R0 = Rank 8 (wK at a8 - off Q rays)
-        [__, __, __, __, __, __, __, __], // R1 = Rank 7
-        [__, __, __, __, __, __, __, __], // R2 = Rank 6
-        [__, __, __, __, __, __, __, __], // R3 = Rank 5
-        [__, __, __, wQ, __, __, __, __], // R4 = Rank 4 (d4)
-        [__, __, __, __, __, __, __, __], // R5 = Rank 3
-        [__, __, __, __, __, __, __, __], // R6 = Rank 2
-        [__, __, __, __, __, __, __, bK], // R7 = Rank 1 (bK at h1 - off Q rays)
+        [wK, __, __, __, __, __, __, __], // 8
+        [__, __, __, __, __, __, __, __], // 7
+        [__, __, __, __, __, __, __, __], // 6
+        [__, __, __, __, __, __, __, __], // 5
+        [__, __, __, wQ, __, __, __, __], // 4
+        [__, __, __, __, __, __, __, __], // 3
+        [__, __, __, __, __, __, __, __], // 2
+        [__, __, __, __, __, __, __, bK], // 1
+      //  a   b   c   d   e   f   g   h
       ]);
       gamestate.calculateLegalMoves();
       expect(
@@ -678,14 +705,15 @@ void main() {
 
     test('Queen blocked by friendly and enemy pieces', () {
       final gamestate = GameState.atPosition(Player.white, [
-        [wK, __, __, __, __, __, __, __], // R0 = Rank 8 (wK at a8)
-        [__, __, __, __, __, __, __, __], // R1 = Rank 7
-        [__, __, __, wB, __, __, __, __], // R2 = Rank 6: d6 (friendly wB)
-        [__, __, __, __, __, __, __, __], // R3 = Rank 5
-        [__, __, __, wQ, __, bp, __, __], // R4 = Rank 4: d4 (wQ), f4 (enemy bp)
-        [__, __, __, __, __, __, __, __], // R5 = Rank 3
-        [__, __, __, __, __, __, __, __], // R6 = Rank 2
-        [__, __, __, __, __, __, __, bK], // R7 = Rank 1 (bK at h1)
+        [wK, __, __, __, __, __, __, __], // 8
+        [__, __, __, __, __, __, __, __], // 7
+        [__, __, __, wB, __, __, __, __], // 6
+        [__, __, __, __, __, __, __, __], // 5
+        [__, __, __, wQ, __, bp, __, __], // 4
+        [__, __, __, __, __, __, __, __], // 3
+        [__, __, __, __, __, __, __, __], // 2
+        [__, __, __, __, __, __, __, bK], // 1
+      //  a   b   c   d   e   f   g   h
       ]);
       gamestate.calculateLegalMoves();
 
@@ -701,14 +729,15 @@ void main() {
   group('King Legal Moves (Chess Rules)', () {
     test('King in center of empty board (d4) has 8 legal moves according to chess rules', () {
       final gamestate = GameState.atPosition(Player.white, [
-        [__, __, __, __, __, __, __, bK], // R0 = Rank 8 (bK at h8)
-        [__, __, __, __, __, __, __, __], // R1 = Rank 7
-        [__, __, __, __, __, __, __, __], // R2 = Rank 6
-        [__, __, __, __, __, __, __, __], // R3 = Rank 5
-        [__, __, __, wK, __, __, __, __], // R4 = Rank 4 (d4)
-        [__, __, __, __, __, __, __, __], // R5 = Rank 3
-        [__, __, __, __, __, __, __, __], // R6 = Rank 2
-        [__, __, __, __, __, __, __, __], // R7 = Rank 1
+        [__, __, __, __, __, __, __, bK], // 8
+        [__, __, __, __, __, __, __, __], // 7
+        [__, __, __, __, __, __, __, __], // 6
+        [__, __, __, __, __, __, __, __], // 5
+        [__, __, __, wK, __, __, __, __], // 4
+        [__, __, __, __, __, __, __, __], // 3
+        [__, __, __, __, __, __, __, __], // 2
+        [__, __, __, __, __, __, __, __], // 1
+      //  a   b   c   d   e   f   g   h
       ]);
       gamestate.calculateLegalMoves();
       expect(
@@ -723,14 +752,15 @@ void main() {
 
     test('King in corner (a1) has 3 legal moves according to chess rules', () {
       final gamestate = GameState.atPosition(Player.white, [
-        [__, __, __, __, __, __, __, bK], // R0 = Rank 8 (bK at h8)
-        [__, __, __, __, __, __, __, __], // R1 = Rank 7
-        [__, __, __, __, __, __, __, __], // R2 = Rank 6
-        [__, __, __, __, __, __, __, __], // R3 = Rank 5
-        [__, __, __, __, __, __, __, __], // R4 = Rank 4
-        [__, __, __, __, __, __, __, __], // R5 = Rank 3
-        [__, __, __, __, __, __, __, __], // R6 = Rank 2
-        [wK, __, __, __, __, __, __, __], // R7 = Rank 1 (a1)
+        [__, __, __, __, __, __, __, bK], // 8
+        [__, __, __, __, __, __, __, __], // 7
+        [__, __, __, __, __, __, __, __], // 6
+        [__, __, __, __, __, __, __, __], // 5
+        [__, __, __, __, __, __, __, __], // 4
+        [__, __, __, __, __, __, __, __], // 3
+        [__, __, __, __, __, __, __, __], // 2
+        [wK, __, __, __, __, __, __, __], // 1
+      //  a   b   c   d   e   f   g   h
       ]);
       gamestate.calculateLegalMoves();
       expect(
@@ -745,14 +775,15 @@ void main() {
 
     test('King captures enemy piece and avoids friendly piece', () {
       final gamestate = GameState.atPosition(Player.white, [
-        [__, __, __, __, __, __, __, bK], // R0 = Rank 8 (bK at h8)
-        [__, __, __, __, __, __, __, __], // R1 = Rank 7
-        [__, __, __, __, __, __, __, __], // R2 = Rank 6
-        [__, __, bp, __, wp, __, __, __], // R3 = Rank 5: c5 (enemy bp), e5 (friendly wp)
-        [__, __, __, wK, __, __, __, __], // R4 = Rank 4: d4 (wK)
-        [__, __, __, __, __, __, __, __], // R5 = Rank 3
-        [__, __, __, __, __, __, __, __], // R6 = Rank 2
-        [__, __, __, __, __, __, __, __], // R7 = Rank 1
+        [__, __, __, __, __, __, __, bK], // 8
+        [__, __, __, __, __, __, __, __], // 7
+        [__, __, __, __, __, __, __, __], // 6
+        [__, __, bp, __, wp, __, __, __], // 5
+        [__, __, __, wK, __, __, __, __], // 4
+        [__, __, __, __, __, __, __, __], // 3
+        [__, __, __, __, __, __, __, __], // 2
+        [__, __, __, __, __, __, __, __], // 1
+      //  a   b   c   d   e   f   g   h
       ]);
       gamestate.calculateLegalMoves();
 
@@ -764,14 +795,15 @@ void main() {
   group('King Check Restrictions (Chess Rules)', () {
     test('King cannot move into squares attacked by enemy piece', () {
       final gamestate = GameState.atPosition(Player.white, [
-        [__, __, bR, __, __, __, __, bK], // R0 = Rank 8: c8 (bR), h8 (bK)
-        [__, __, __, __, __, __, __, __], // R1 = Rank 7
-        [__, __, __, __, __, __, __, __], // R2 = Rank 6
-        [__, __, __, __, __, __, __, __], // R3 = Rank 5
-        [__, __, __, wK, __, __, __, __], // R4 = Rank 4: d4 (wK)
-        [__, __, __, __, __, __, __, __], // R5 = Rank 3
-        [__, __, __, __, __, __, __, __], // R6 = Rank 2
-        [__, __, __, __, __, __, __, __], // R7 = Rank 1
+        [__, __, bR, __, __, __, __, bK], // 8
+        [__, __, __, __, __, __, __, __], // 7
+        [__, __, __, __, __, __, __, __], // 6
+        [__, __, __, __, __, __, __, __], // 5
+        [__, __, __, wK, __, __, __, __], // 4
+        [__, __, __, __, __, __, __, __], // 3
+        [__, __, __, __, __, __, __, __], // 2
+        [__, __, __, __, __, __, __, __], // 1
+      //  a   b   c   d   e   f   g   h
       ]);
       gamestate.calculateLegalMoves();
 
@@ -791,14 +823,15 @@ void main() {
 
     test('When in check, player can only make moves that resolve check (block, capture, or move King)', () {
       final gamestate = GameState.atPosition(Player.white, [
-        [__, __, __, __, bR, __, __, bK], // R0 = Rank 8: e8 (bR - checking wK at e1), h8 (bK)
-        [__, __, __, __, __, __, __, __], // R1 = Rank 7
-        [__, __, __, __, __, __, __, __], // R2 = Rank 6
-        [__, __, __, __, __, __, __, __], // R3 = Rank 5
-        [wR, __, __, __, __, __, __, __], // R4 = Rank 4: a4 (wR - can block at e4)
-        [__, __, __, __, __, __, __, __], // R5 = Rank 3
-        [__, __, __, __, __, __, __, __], // R6 = Rank 2
-        [wB, __, __, __, wK, __, __, __], // R7 = Rank 1: a1 (wB - can block at e5), e1 (wK - in check)
+        [__, __, __, __, bR, __, __, bK], // 8
+        [__, __, __, __, __, __, __, __], // 7
+        [__, __, __, __, __, __, __, __], // 6
+        [__, __, __, __, __, __, __, __], // 5
+        [wR, __, __, __, __, __, __, __], // 4
+        [__, __, __, __, __, __, __, __], // 3
+        [__, __, __, __, __, __, __, __], // 2
+        [wB, __, __, __, wK, __, __, __], // 1
+      //  a   b   c   d   e   f   g   h
       ]);
       gamestate.calculateLegalMoves();
 
@@ -824,14 +857,15 @@ void main() {
 
     test('When in check, capturing the checking piece is allowed to resolve check', () {
       final gamestate = GameState.atPosition(Player.white, [
-        [__, __, __, __, __, __, __, bK], // R0 = Rank 8: h8 (bK)
-        [__, __, __, __, __, __, __, __], // R1 = Rank 7
-        [__, __, __, __, __, __, __, __], // R2 = Rank 6
-        [__, __, __, __, __, __, __, __], // R3 = Rank 5
-        [__, __, __, __, bQ, __, __, __], // R4 = Rank 4: e4 (bQ - checking wK at e1)
-        [__, __, wN, __, __, __, __, __], // R5 = Rank 3: c3 (wN - can capture bQ at e4)
-        [__, __, __, __, __, __, __, __], // R6 = Rank 2
-        [__, __, __, __, wK, __, __, __], // R7 = Rank 1: e1 (wK - in check)
+        [__, __, __, __, __, __, __, bK], // 8
+        [__, __, __, __, __, __, __, __], // 7
+        [__, __, __, __, __, __, __, __], // 6
+        [__, __, __, __, __, __, __, __], // 5
+        [__, __, __, __, bQ, __, __, __], // 4
+        [__, __, wN, __, __, __, __, __], // 3
+        [__, __, __, __, __, __, __, __], // 2
+        [__, __, __, __, wK, __, __, __], // 1
+      //  a   b   c   d   e   f   g   h
       ]);
       gamestate.calculateLegalMoves();
 
@@ -847,14 +881,15 @@ void main() {
   group('Pinned Piece Restrictions (Chess Rules)', () {
     test('Piece pinned vertically to King cannot move horizontally off pin ray', () {
       final gamestate = GameState.atPosition(Player.white, [
-        [__, __, __, __, bR, __, __, bK], // R0 = Rank 8: e8 (bR), h8 (bK)
-        [__, __, __, __, __, __, __, __], // R1 = Rank 7
-        [__, __, __, __, __, __, __, __], // R2 = Rank 6
-        [__, __, __, __, __, __, __, __], // R3 = Rank 5
-        [__, __, __, __, wR, __, __, __], // R4 = Rank 4: e4 (wR - pinned to wK on e1)
-        [__, __, __, __, __, __, __, __], // R5 = Rank 3
-        [__, __, __, __, __, __, __, __], // R6 = Rank 2
-        [__, __, __, __, wK, __, __, __], // R7 = Rank 1: e1 (wK)
+        [__, __, __, __, bR, __, __, bK], // 8
+        [__, __, __, __, __, __, __, __], // 7
+        [__, __, __, __, __, __, __, __], // 6
+        [__, __, __, __, __, __, __, __], // 5
+        [__, __, __, __, wR, __, __, __], // 4
+        [__, __, __, __, __, __, __, __], // 3
+        [__, __, __, __, __, __, __, __], // 2
+        [__, __, __, __, wK, __, __, __], // 1
+      //  a   b   c   d   e   f   g   h
       ]);
       gamestate.calculateLegalMoves();
 
@@ -870,14 +905,15 @@ void main() {
 
     test('Piece pinned diagonally to King cannot move off diagonal pin ray', () {
       final gamestate = GameState.atPosition(Player.white, [
-        [__, __, __, __, __, __, __, bK], // R0 = Rank 8: h8 (bK)
-        [__, __, __, __, __, __, __, __], // R1 = Rank 7
-        [__, __, __, __, __, __, __, __], // R2 = Rank 6
-        [bB, __, __, __, __, __, __, __], // R3 = Rank 5: a5 (bB - pinning wB at d2 to wK at e1)
-        [__, __, __, __, __, __, __, __], // R4 = Rank 4
-        [__, __, __, __, __, __, __, __], // R5 = Rank 3
-        [__, __, __, wB, __, __, __, __], // R6 = Rank 2: d2 (wB)
-        [__, __, __, __, wK, __, __, __], // R7 = Rank 1: e1 (wK)
+        [__, __, __, __, __, __, __, bK], // 8
+        [__, __, __, __, __, __, __, __], // 7
+        [__, __, __, __, __, __, __, __], // 6
+        [bB, __, __, __, __, __, __, __], // 5
+        [__, __, __, __, __, __, __, __], // 4
+        [__, __, __, __, __, __, __, __], // 3
+        [__, __, __, wB, __, __, __, __], // 2
+        [__, __, __, __, wK, __, __, __], // 1
+      //  a   b   c   d   e   f   g   h
       ]);
       gamestate.calculateLegalMoves();
 

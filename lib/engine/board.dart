@@ -7,14 +7,15 @@ const __ = null;
 
 class Board {
   List<List<Piece?>> _grid = [
-    [bR, bN, bB, bQ, bK, bB, bN, bR],
-    [bp, bp, bp, bp, bp, bp, bp, bp],
-    [__, __, __, __, __, __, __, __],
-    [__, __, __, __, __, __, __, __],
-    [__, __, __, __, __, __, __, __],
-    [__, __, __, __, __, __, __, __],
-    [wp, wp, wp, wp, wp, wp, wp, wp],
-    [wR, wN, wB, wQ, wK, wB, wN, wR],
+    [bR, bN, bB, bQ, bK, bB, bN, bR], // 8
+    [bp, bp, bp, bp, bp, bp, bp, bp], // 7
+    [__, __, __, __, __, __, __, __], // 6
+    [__, __, __, __, __, __, __, __], // 5
+    [__, __, __, __, __, __, __, __], // 4
+    [__, __, __, __, __, __, __, __], // 3
+    [wp, wp, wp, wp, wp, wp, wp, wp], // 2
+    [wR, wN, wB, wQ, wK, wB, wN, wR], // 1
+  //  a   b   c   d   e   f   g   h
   ];
 
   Board();
@@ -43,16 +44,14 @@ class Board {
     return (x, y);
   }
 
-  // OVERRIDE THE READ OPERATOR
-  // This lets us do: Piece? p = board['e4'];
+  // usage: Piece? p = board['e4'];
   Piece? operator [](String square) {
     final (row, col) = _squareToCoords(square);
     if (row == -1) return null; // Invalid square
     return _grid[row][col];
   }
 
-  // OVERRIDE THE WRITE OPERATOR
-  // This lets us do: board['e4'] = wp;
+  // usage: board['e4'] = wp;
   void operator []=(String square, Piece? piece) {
     final (row, col) = _squareToCoords(square);
     if (row != -1) {
