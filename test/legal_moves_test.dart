@@ -297,6 +297,30 @@ void main() {
       expect(gamestate.legalMoves, isNot(contains(const Move(PieceType.pawn, 'e5', 'd6'))));
     });
   });
+  
+  group('Pawn Promotions (Chess Rules)', () {
+    test ('White can promote pawn to a queen, a rook, a bishop or a knight', () {
+      final gamestate = GameState.atPosition(
+        Player.white,
+        [
+          [__, __, __, __, __, __, __, __], // 8
+          [__, __, __, __, wp, __, __, __], // 7
+          [__, __, __, __, __, __, __, __], // 6
+          [__, __, __, bp, __, __, __, __], // 5
+          [__, __, __, __, __, __, bK, __], // 4
+          [__, __, __, __, __, __, __, __], // 3
+          [__, __, __, __, __, __, __, __], // 2
+          [__, __, wK, __, __, __, __, __], // 1
+        //  a   b   c   d   e   f   g   h
+        ],
+      );
+
+      expect(gamestate.legalMoves, contains(const Move.promotion('e7', 'e8', PieceType.queen)));
+      expect(gamestate.legalMoves, contains(const Move.promotion('e7', 'e8', PieceType.rook)));
+      expect(gamestate.legalMoves, contains(const Move.promotion('e7', 'e8', PieceType.bishop)));
+      expect(gamestate.legalMoves, contains(const Move.promotion('e7', 'e8', PieceType.knight)));
+    });
+  });
 
   group('Castling Legal Moves (Chess Rules)', () {
     test('White short and long castling are legal when requirements are met', () {
