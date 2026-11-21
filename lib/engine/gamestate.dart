@@ -105,21 +105,22 @@ class GameState {
 
   void calculateLegalMoves() => _calcAllLegalMoves();
 
+  bool _isCandidateMoveLegal(Move move) {
+    var next = GameState.next(this, move);
+    next._calcAllCandidateMoves();
+    for (var nextMove in next.candidateMoves) {
+      final piece = next.board[nextMove.endSquare];
+      if (piece?.type == PieceType.king && piece?.player == turnPlayer) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   void _calcAllLegalMoves() {
     candidateMoves = [];
     _calcAllCandidateMoves();
-    candidateMoves.removeWhere((move) {
-      var next = GameState.next(this, move);
-      next._calcAllCandidateMoves();
-
-      for (var nextMove in next.candidateMoves) {
-        final piece = next.board[nextMove.endSquare];
-        if (piece?.type == PieceType.king && piece?.player == turnPlayer) {
-          return true;
-        }
-      }
-      return false;
-    });
+    candidateMoves.removeWhere((move) {return !_isCandidateMoveLegal(move);});
 
     legalMoves = candidateMoves;
   }
@@ -158,15 +159,6 @@ class GameState {
     }
   }
 
-  void _addCandidateMove(
-    PieceType type, 
-    String startSquare, 
-    String endSquare, 
-    PieceType? promotingType
-  ) {
-    candidateMoves.add(Move(type, startSquare, endSquare, promotingType));
-  }
-
   bool _addDirectionalCandidateMove(
     PieceType type, 
     String targetSquare, 
@@ -177,14 +169,14 @@ class GameState {
       throw ArgumentError("Invalid piece type for directional move");
     }
     if (board[targetSquare] == null) {
-      _addCandidateMove(type, square, targetSquare, null);
+      candidateMoves.add(Move(type, square, targetSquare));
       return true;
     }
     if (hasFriendlyPiece(targetSquare)) {
       return false;
     } else {
       // Has Enemy Piece
-      _addCandidateMove(type, square, targetSquare, null);
+      candidateMoves.add(Move(type, square, targetSquare));
       return false;
     }
   }
@@ -202,13 +194,13 @@ class GameState {
     // Helper function to add pawn moves to the candidates list, checking for promotions
     void addPawnMoves(String targetSquare) {
         if (!isAboutToPromote) {
-          _addCandidateMove(PieceType.pawn, square, targetSquare, null);
+          candidateMoves.add(Move(PieceType.pawn, square, targetSquare));
           return;
         }
-        _addCandidateMove(PieceType.pawn, square, targetSquare, PieceType.queen);
-        _addCandidateMove(PieceType.pawn, square, targetSquare, PieceType.rook);
-        _addCandidateMove(PieceType.pawn, square, targetSquare, PieceType.bishop);
-        _addCandidateMove(PieceType.pawn, square, targetSquare, PieceType.knight);
+        candidateMoves.add(Move.promotion(square, targetSquare, PieceType.queen));
+        candidateMoves.add(Move.promotion(square, targetSquare, PieceType.rook));
+        candidateMoves.add(Move.promotion( square, targetSquare, PieceType.bishop));
+        candidateMoves.add(Move.promotion(square, targetSquare, PieceType.knight));
     }
 
     if (board[targetSquare] == null) {
@@ -256,7 +248,7 @@ class GameState {
     for (var (a, b) in shifts) {
       targetSquare = '${file + a}${rank + b}';
       if (Board.isValidSquare(targetSquare) && !hasFriendlyPiece(targetSquare)) {
-        _addCandidateMove(PieceType.knight, square, targetSquare, null);
+        candidateMoves.add(Move(PieceType.knight, square, targetSquare));
       }
     }
   }
@@ -456,17 +448,7 @@ class GameState {
     }
   }
 
-  bool _isCandidateMoveLegal(Move move) {
-    var next = GameState.next(this, move);
-    next._calcAllCandidateMoves();
-    for (var nextMove in next.candidateMoves) {
-      final piece = next.board[nextMove.endSquare];
-      if (piece?.type == PieceType.king && piece?.player == turnPlayer) {
-        return false;
-      }
-    }
-    return true;
-  }
+
 
   void _calcKingMoves(ChessFile file, int rank) {
     final square = '$file$rank';
@@ -475,7 +457,7 @@ class GameState {
     for (var (a, b) in shifts) {
       targetSquare = '${file + a}${rank + b}';
       if (Board.isValidSquare(targetSquare) && !hasFriendlyPiece(targetSquare)) {
-        _addCandidateMove(PieceType.king, square, targetSquare, null);
+        candidateMoves.add(Move(PieceType.king, square, targetSquare));
       }
     }
 
@@ -514,9 +496,9 @@ class GameState {
         board['h$rank']?.player == turnPlayer &&
         board['f$rank'] == null &&
         board['g$rank'] == null) {
-      final kfMove = Move(PieceType.king, 'e$rank', 'f$rank', null);
+      final kfMove = Move(PieceType.king, 'e$rank', 'f$rank');
       if (candidateMoves.contains(kfMove) && _isCandidateMoveLegal(kfMove)) {
-        _addCandidateMove(PieceType.king, 'e$rank', 'g$rank', null);
+        candidateMoves.add(Move(PieceType.king, 'e$rank', 'g$rank'));
       }
     }
 
@@ -527,9 +509,9 @@ class GameState {
         board['b$rank'] == null &&
         board['c$rank'] == null &&
         board['d$rank'] == null) {
-      final kdMove = Move(PieceType.king, 'e$rank', 'd$rank', null);
+      final kdMove = Move(PieceType.king, 'e$rank', 'd$rank');
       if (candidateMoves.contains(kdMove) && _isCandidateMoveLegal(kdMove)) {
-        _addCandidateMove(PieceType.king, 'e$rank', 'c$rank', null);
+        candidateMoves.add(Move(PieceType.king, 'e$rank', 'c$rank'));
       }
     }
   }

@@ -63,7 +63,9 @@ class Move {
   final String endSquare;
   final PieceType? promotingType;
 
-  const Move(this.type, this.startSquare, this.endSquare, this.promotingType);
+
+  const Move(this.type, this.startSquare, this.endSquare) : promotingType = null;
+  const Move.promotion(this.startSquare, this.endSquare, this.promotingType) : type = PieceType.pawn;
 
   @override
   bool operator ==(Object other) =>
