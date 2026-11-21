@@ -38,12 +38,32 @@ const bB = Piece(Player.black, PieceType.bishop);
 const bQ = Piece(Player.black, PieceType.queen);
 const bK = Piece(Player.black, PieceType.king);
 
+const pieces = {
+  Player.white: {
+    PieceType.pawn: wp,
+    PieceType.rook: wR,
+    PieceType.knight: wN,
+    PieceType.bishop: wB,
+    PieceType.queen: wQ,
+    PieceType.king: wK,
+  },
+  Player.black: {
+    PieceType.pawn: bp,
+    PieceType.rook: bR,
+    PieceType.knight: bN,
+    PieceType.bishop: bB,
+    PieceType.queen: bQ,
+    PieceType.king: bK,
+  },
+};
+
 class Move {
   final PieceType type;
   final String startSquare;
   final String endSquare;
+  final PieceType? promotingType;
 
-  const Move(this.type, this.startSquare, this.endSquare);
+  const Move(this.type, this.startSquare, this.endSquare, this.promotingType);
 
   @override
   bool operator ==(Object other) =>
@@ -55,8 +75,8 @@ class Move {
           endSquare == other.endSquare;
 
   @override
-  int get hashCode => Object.hash(type, startSquare, endSquare);
+  int get hashCode => Object.hash(type, startSquare, endSquare, promotingType);
 
   @override
-  String toString() => 'Move($type, $startSquare, $endSquare)';
+  String toString() => 'Move($type, $startSquare, $endSquare, $promotingType)';
 }

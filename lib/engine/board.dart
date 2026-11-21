@@ -62,12 +62,17 @@ class Board {
 
   void applyMove(Move move) {
     final piece = this[move.startSquare];
+
+    // En passant capture
     if (piece?.type == PieceType.pawn &&
         move.startSquare[0] != move.endSquare[0] &&
         this[move.endSquare] == null) {
+      // Remove pawn captured en passant
       final capturedSquare = '${move.endSquare[0]}${move.startSquare[1]}';
       this[capturedSquare] = null;
     }
+
+    // Castling
     final startFile = ChessFile(move.startSquare[0]);
     final endFile = ChessFile(move.endSquare[0]);
     final rank = move.startSquare[1];
@@ -83,6 +88,14 @@ class Board {
       this['a$rank'] = null;
       this['d$rank'] = rook;
     }
+
+    // Promotion
+    if (move.promotingType != null) {
+      this[move.startSquare] = null;
+      this[move.endSquare] = pieces[piece?.player]?[move.promotingType];
+    }
+
+    // Other moves
     this[move.startSquare] = null;
     this[move.endSquare] = piece;
   }
