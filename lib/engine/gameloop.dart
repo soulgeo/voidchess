@@ -33,8 +33,13 @@ class GameLoop {
         final currentPlayer = gamestate.turnPlayer;
         final activeClock = clockFor(currentPlayer);
 
-        if (gamestate.legalMoves.isEmpty || activeClock.isFinished) {
-          winner = currentPlayer * -1;
+        if (gamestate.legalMoves.isEmpty) {
+          if (gamestate.isKingInCheck()) {
+            // Checkmate
+            winner = currentPlayer * -1;
+          } else {
+            // Stalemate
+          }
           break;
         }
 
